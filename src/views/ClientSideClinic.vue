@@ -11,6 +11,7 @@ const getSchedules = async (url) => {
 	const res = await fetch(url);
 	if (res.status === 200) {
 		schedules.value = await res.json();
+		schedules.value = schedules.value.reverse();
 	}
 };
 
@@ -25,7 +26,6 @@ onBeforeMount(async () => {
 			:schedules="schedules"
 			class="grid justify-center pt-2"
 		/>
-		<p>askflksdfnmsldk</p>
 	</div>
 </template>
 

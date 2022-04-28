@@ -2,27 +2,35 @@
 import { ref, onBeforeMount } from "vue";
 import Schedules from "../components/Schedules.vue";
 
-const URL = "http://localhost:5000/schedules";
-
 const schedules = ref([]);
+const category = ref([]);
 
 // GET
-const getSchedules = async (url) => {
-	const res = await fetch(url);
-	if (res.status === 200) {
+const getSchedules = async () => {
+	const res = await fetch("http://localhost:5000/schedule");
+	if(res.status === 200) {
 		schedules.value = await res.json();
-	}
-};
+	}else console.log("error, cannot get data");
+}
+
+// GET
+const getCategory = async () => {
+	const res = await fetch("http://localhost:5000/category");
+	if(res.status === 200) {
+		schedules.value = await res.json();
+	}else console.log("error, cannot get data");
+}
 
 onBeforeMount(async () => {
-	await getSchedules(URL);
+	await getSchedules(), getCategory();
 });
 </script>
 
 <template>
 	<div id="content-section">
-		<Schedules
+		<schedules
 			:schedules="schedules"
+			:category="category"
 			class="grid justify-center pt-2"
 		/>
 	</div>
