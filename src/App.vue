@@ -3,7 +3,9 @@
 </script>
 
 <template>
-  <p class="text-xl">tong</p>
+  <div id="homepage">
+    <router-view></router-view>
+  </div>
 </template>
 
 <style>

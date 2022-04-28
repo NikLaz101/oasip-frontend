@@ -7,4 +7,14 @@ module.exports = {
         extend: {},
     },
     plugins: [require("daisyui")],
+    daisyui: {
+        themes: [{
+            light: {
+                ...require("daisyui/src/colors/themes")[
+                    "[data-theme=garden]"
+                ],
+                "base-100": "#00044f"
+            },
+        }, ],
+    },
 }

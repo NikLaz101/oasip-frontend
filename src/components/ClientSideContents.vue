@@ -1,0 +1,101 @@
+<script setup>
+import { ref, onBeforeMount } from "vue";
+import VEdit from "./buttons/VEdit.vue";
+import VDelete from "./buttons/VDelete.vue";
+
+const SCHEDULES_URL = "http://localhost:5000/ClientSideClinic";
+
+const props = defineProps({
+	schedules: {
+		type: Number,
+		require: true,
+	},
+});
+
+const user = ref({});
+const length = ref(0);
+
+// GET
+const getSchedules = async (url, id) => {
+	const res = await fetch(url + "/" + id + "/" + "?_embed=posts");
+	if (res.status === 200) {
+		user.value = await res.json();
+		length.value = user.value.posts.length;
+		user.value.posts = user.value.posts.reverse();
+	}
+};
+
+// DELETE
+const deletePost = async (id) => {
+	if (confirm("Do you want to delete this post?")) {
+		const res = await fetch(POSTS_URL + "/" + id, { method: "DELETE" });
+		if (res.status === 200) {
+			user.value.posts = user.value.posts.filter(
+				(post) => post.id !== id
+			);
+		}
+	}
+};
+
+// PUT
+const editPost = async (modified_post) => {
+	if (modified_post.content.length < 1) {
+		deletePost(modified_post.id);
+	} else {
+		const res = await fetch(POSTS_URL + "/" + modified_post.id, {
+			method: "PUT",
+			headers: {
+				"content-type": "application/json",
+			},
+			body: JSON.stringify({
+				userId: modified_post.userId,
+				content: modified_post.content,
+			}),
+		});
+		if (res.status === 200) {
+			const modifiedPost = await res.json();
+			user.value.posts = user.value.posts.map((post) =>
+				post.id === modifiedPost.id
+					? { ...post, content: modifiedPost.content }
+					: post
+			);
+		}
+	}
+};
+
+onBeforeMount(async () => {
+	await getPosts(USERS_URL, props.userId);
+});
+</script>
+
+<template>
+	<div id="content-list">
+		<div v-if="length < 1" class="no-content text-5xl pt-20">
+			No Scheduled Events
+		</div>
+		<template v-else>
+			<div v-for="(post, index) in user.posts" :key="index">
+				<div class="box-element box-content max-h-xl p-6">
+					<div class="font-semibold text-xl flex justify-between">
+						<div class="flex flex-row">
+							<div class="pr-1">You complain</div>
+							<VEdit :id="schedules.id" @click:action="editPost" />
+						</div>
+						<VDelete :id="schedules.id" @click:action="deletePost" />
+					</div>
+				</div>
+			</div>
+		</template>
+	</div>
+</template>
+
+<style scoped>
+.no-content {
+	color: #2f6d74;
+}
+.box-element {
+	@apply shadow-xl my-3 rounded-xl;
+	width: 500px;
+	background-color: #ede6db;
+}
+</style>
