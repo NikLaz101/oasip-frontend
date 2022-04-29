@@ -16,7 +16,6 @@
         </div>
         <div id="content">
             <div>
-                <Schedules />
                 <button class="btn">Create</button>
             </div>
         </div>
