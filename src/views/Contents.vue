@@ -3,6 +3,7 @@ import { ref, onBeforeMount } from "vue";
 import Schedules from "../components/Schedules.vue";
 
 const schedules = ref([]);
+const URL = '/api'
 
 // GET
 const getSchedules = async () => {
@@ -22,7 +23,7 @@ onBeforeMount(async () => {
 <template>
 	<div id="content-section">
 		<schedules
-			:schedules="schedules"
+			:content="schedules"
 			class="grid justify-center pt-2"
 		/>
 	</div>

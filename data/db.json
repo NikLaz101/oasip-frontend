@@ -1,6 +1,5 @@
 {
-    "schedule": [
-        {
+    "schedule": [{
             "bookingId": 1,
             "bookingName": "Somchai Jaidee(OR-7)",
             "bookingEmail": "somchai.jai@mail.kmutt.ac.th",
@@ -43,5 +42,5 @@
         "eventCategoryDesc": "ตารางนัดหมายนี้ใช้สําหรับนัดหมาย database clinic ในวิชา INT221 integrated project I",
         "eventDuration": 15
     }],
-    "game" : []
+    "game": []
 }
