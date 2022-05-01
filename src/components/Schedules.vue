@@ -1,10 +1,18 @@
 <script setup>
-const prop = defineProps({
+import { ref, computed } from 'vue';
+defineProps({
     content: {
         type: Array,
         require: true,
     },
 });
+
+const currentDetail = ref([]);
+const moreDetail = (curbookingId) => {
+    currentDetail.value = curbookingId;
+    // console.log(curbookingId);
+}
+
 </script>
 
 <template>
@@ -19,35 +27,38 @@ const prop = defineProps({
                         {{ contents.bookingId }}. {{ contents.bookingName }}
                         {{ contents.eventStartTime }}
                         <div id="showDetail">
-                            <label for="my-modal-4" class="btn modal-button">More Detail</label>
+                            <label for="my-modal-4" class="btn modal-button" @click="moreDetail(contents)">More Detail</label>
                             <input
                                 type="checkbox"
                                 id="my-modal-4"
                                 class="modal-toggle"
                             />
                             <label for="my-modal-4" class="modal cursor-pointer">
-                                <label class="box-element modal-box relative" for="">
+                                <label class="box-element modal-box relative">
                                     <h3 class="text-xl font-bold">
                                         Detail
                                     </h3>
-                                    <ul class="text-lg">
+                                    <ul class="text-lg"  >
                                         <li>
-                                            Name: {{ contents.bookingName }}
+                                            ID : {{ currentDetail.bookingId }}
                                         </li>
                                         <li>
-                                            Email: {{ contents.bookingEmail }}
+                                            Name: {{ currentDetail.bookingName }}
                                         </li>
                                         <li>
-                                            Clinic: {{ contents.eventCategory }}
+                                            Email: {{ currentDetail.bookingEmail }}
                                         </li>
                                         <li>
-                                            StartTime: {{ contents.eventStartTime }}
+                                            Clinic: {{ currentDetail.eventCategory }}
                                         </li>
                                         <li>
-                                            Duration: {{ contents.eventDuration }}
+                                            StartTime: {{ currentDetail.eventStartTime }}
                                         </li>
                                         <li>
-                                            Note: {{ contents.eventNotes }}
+                                            Duration: {{ currentDetail.eventDuration }}
+                                        </li>
+                                        <li>
+                                            Note: {{ currentDetail.eventNotes }}
                                         </li>
                                     </ul>
                                 </label>
