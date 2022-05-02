@@ -16,7 +16,7 @@ const props = defineProps({
             <div v-for="schedule in props.schedules">
                 <div class="box-element box-content max-h-xl p-6">
                     <div class="font-semibold text-xl text-black">
-                     {{schedule.bookingId }}. {{schedule.bookingName }} {{ schedule.eventCategory }}
+                     {{schedule.id }}. {{schedule.bookingName }} {{ schedule.eventCategory }}
                     </div>
                 </div>
             </div>

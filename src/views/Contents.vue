@@ -6,7 +6,8 @@ const schedules = ref([]);
 
 // GET
 const getSchedules = async () => {
-	const res = await fetch("http://localhost:5000/schedule");
+	// const res = await fetch("http://localhost:5000/schedule");
+	const res = await fetch("http://localhost:8080/api/event");
 	if(res.status === 200) {
 		schedules.value = await res.json();
 		console.log(schedules.value);
