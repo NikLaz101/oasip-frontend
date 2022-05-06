@@ -27,7 +27,7 @@ const getSchedules = async (url, id) => {
 
 // DELETE
 const deletePost = async (id) => {
-	if (confirm("Do you want to delete this post?")) {
+	if (confirm("Do you want to delete this schedule?")) {
 		const res = await fetch(POSTS_URL + "/" + id, { method: "DELETE" });
 		if (res.status === 200) {
 			user.value.posts = user.value.posts.filter(

@@ -23,7 +23,7 @@ onBeforeMount(async () => {
 <template>
 	<div id="content-section">
 		<ClientSideClinic
-			:schedules="schedules"
+			:entries="schedules"
 			class="grid justify-center pt-2"
 		/>
 	</div>

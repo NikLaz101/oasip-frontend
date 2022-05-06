@@ -13,7 +13,7 @@ module.exports = {
                 ...require("daisyui/src/colors/themes")[
                     "[data-theme=garden]"
                 ],
-                "base-100": "#00044f"
+                "base-100": "#100057"
             },
         }, ],
     },
