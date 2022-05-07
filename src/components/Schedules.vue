@@ -8,41 +8,46 @@ const props = defineProps({
     type: Array,
     require: true,
   },
+  category: {
+    type: Array,
+    require: true,
+  },
 });
 
-const category = ref([]);
-const newDuration = ref([])
-// GET
-const getCategorys = async () => {
-		const res = await fetch("http://ip21at1.sit.kmutt.ac.th:5000/api/category");
-	if(res.status === 200) {
-		category.value = await res.json();
-		console.log(category.value);
-	}else console.log("error, cannot get data");
-}
+const Name = ref();
+const Email = ref();
+const Selected = ref();
+const Time = ref();
+const Duration = ref();
+const Notes = ref();
+const selectedId = ref();
 
-onBeforeMount(async () => {
-	await getCategorys();
-});
-
-// category.value.forEach(category => console.log(1));
-const newDetail = computed(() => {    
-  return {
-    bookingName: props.content.bookingName,
-    bookingEmail: props.content.bookingEmail,
-    categoryId: props.content.categoryId,
-    categoryName: props.content.categoryName,
-    eventStartTime: props.content.eventStartTime,
-    eventDuration: props.content.eventDuration,
-    eventNotes: props.content.eventNotes,
-  };
-});
+const newDuration = () => {
+  props.category.forEach((category) => {
+    if (category.eventCategoryName === Selected.value) {
+      Duration.value = category.eventDuration;
+      selectedId.value = category.id;
+    }
+    // console.log(category.eventCategoryName);
+    // console.log(Selected.value);
+  });
+};
+// const newDetail = computed(() => {
+//   return {
+//     bookingName: props.content.bookingName,
+//     bookingEmail: props.content.bookingEmail,
+//     categoryId: props.content.categoryId,
+//     categoryName: props.content.categoryName,
+//     eventStartTime: props.content.eventStartTime,
+//     eventDuration: props.content.eventDuration,
+//     eventNotes: props.content.eventNotes,
+//   };
+// });
 
 const currentDetail = ref([]);
 const moreDetail = (curbookingId) => {
   currentDetail.value = curbookingId;
 };
-
 </script>
 
 <template>
@@ -52,7 +57,7 @@ const moreDetail = (curbookingId) => {
       <table class="table table-zebra w-full rounded-full">
         <thead>
           <tr>
-            <th class="text-xl font-extrabold px-10">NAME</th>
+            <th id="Name" class="text-xl font-extrabold px-10">NAME</th>
             <th class="px-10">
               <div class="dropdown">
                 <button tabindex="0" class="m-1 text-xl font-extrabold">
@@ -83,7 +88,20 @@ const moreDetail = (curbookingId) => {
             <th class="text-xl font-extrabold px-10">DATE</th>
             <th class="text-xl font-extrabold px-10">DURATION</th>
             <th>
-              <label for="my-modal" class="btn modal-button">CREATE</label>
+              <!-- Create -->
+              <label
+                for="my-modal"
+                class="btn text-xl font-extrabold px-10"
+                @click="
+                  Name = undefined;
+                  Email = undefined;
+                  Selected = undefined;
+                  Time = undefined;
+                  Duration = undefined;
+                  Notes = undefined;
+                "
+                >CREATE</label
+              >
               <input type="checkbox" id="my-modal" class="modal-toggle" />
               <div class="modal">
                 <div class="modal-box">
@@ -92,71 +110,75 @@ const moreDetail = (curbookingId) => {
                     class="btn btn-sm btn-circle absolute right-2 top-2"
                     >✕</label
                   >
-                  <!-- Create -->
                   <table>
-        <tr>
-            <th id="size">Name:</th>
-            <td id="size">
-                <input type="text" v-model="newDetail.bookingName" />
-            </td>
-        </tr>
-        <tr>
-            <th id="size">Email:</th>
-            <td id="size">
-                <input type="text" v-model="newDetail.bookingEmail" />
-            </td>
-        </tr>
-        <tr>
-            <th id="size">Clinic:</th>
-            <td id="size">
-                <form>
-                    <select
-                        id="clinics"
-                        name="clinics"
-                        class="text-black"
-                        v-model="newDetail.categoryName"
-                    >
-                        <option selected>--Select--</option>
-                        <option value="Project Management">
-                            Project Management
-                        </option>
-                        <option value="DevOps/Infra">DevOps/Infra</option>
-                        <option value="Database">Database</option>
-                        <option value="Client-Side">Client-Side</option>
-                        <option value="Server-Side">Server-Side</option>
-                    </select>
-                </form>
-            </td>
-        </tr>
-        <tr>
-            <th id="size">Date:</th>
-            <td id="size">
-                <input
-                    type="datetime-local"
-                    v-model="newDetail.eventStartTime"
-                />
-            </td>
-        </tr>
-        <tr>
-            <th id="size">Duration:</th>
-            <td id="size">
-                <input type="text" v-model="newDetail.eventDuration" />
-            </td>
-        </tr>
-        <tr>
-            <th id="size">Note:</th>
-            <td id="size">
-                <textarea
-                    cols="30"
-                    rows="5"
-                    v-model="newDetail.eventNotes"
-                ></textarea>
-            </td>
-        </tr>
-    </table>
+                    <tr>
+                      <th id="size">Name:</th>
+                      <td id="size">
+                        <input type="text" v-model="Name" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th id="size">Email:</th>
+                      <td id="size">
+                        <input type="text" v-model="Email" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th id="size">Clinic:</th>
+                      <td id="size">
+                        <form>
+                          <select
+                            id="clinics"
+                            name="clinics"
+                            class="text-black"
+                            @change="newDuration"
+                            v-model="Selected"
+                          >
+                            <option selected>--Select--</option>
+                            <option v-for="categorys in category" :value="categorys.eventCategoryName">
+                              {{ categorys.eventCategoryName }}
+                            </option>
+                          </select>
+                        </form>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th id="size">Date:</th>
+                      <td id="size">
+                        <input type="datetime-local" v-model="Time" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th id="size">Duration:</th>
+                      <td id="size">
+                        <input readonly type="text" v-model="Duration" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th id="size">Note:</th>
+                      <td id="size">
+                        <textarea cols="30" rows="5" v-model="Notes"></textarea>
+                      </td>
+                    </tr>
+                  </table>
 
                   <div class="modal-action">
-                    <button @click="$emit('create')" class="btn">Create</button>
+                    <label
+                      for="my-modal"
+                      @click="
+                        $emit(
+                          'create',
+                          Name,
+                          Email,
+                          selectedId,
+                          Time,
+                          Duration,
+                          Notes
+                        )
+                      "
+                      class="btn"
+                      >Create</label
+                    >
                   </div>
                 </div>
               </div>
@@ -280,7 +302,8 @@ const moreDetail = (curbookingId) => {
 .table-content {
   height: 600px;
 }
-table th {
+table th,
+#Name {
   position: -webkit-sticky;
   position: sticky;
   top: 0;

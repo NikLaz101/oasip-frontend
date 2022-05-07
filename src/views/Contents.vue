@@ -1,7 +1,17 @@
 <script setup>
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, onBeforeUpdate } from "vue";
 import Schedules from "../components/Schedules.vue";
 const schedules = ref([]);
+
+const category = ref([]);
+// GET
+const getCategorys = async () => {
+		const res = await fetch("http://ip21at1.sit.kmutt.ac.th:5000/api/category");
+	if(res.status === 200) {
+		category.value = await res.json();
+		console.log(category.value);
+	}else console.log("error, cannot get data");
+}
 
 // GET
 const getSchedules = async () => {
@@ -10,7 +20,7 @@ const getSchedules = async () => {
 		// const res = await fetch("http://localhost:8080/api/event/");
 	if(res.status === 200) {
 		schedules.value = await res.json();
-		console.log(schedules.value);
+		// console.log(schedules.value);
 	}else console.log("error, cannot get data");
 }
 
@@ -33,29 +43,33 @@ const removeSchedules = async (removeContentID) => {
 };
 
 // POST
-const createNewSchedules = async (newName, newSrc, newGPS, newDetails) => {
-  const res = await fetch("http://localhost:5000/Central", {
-    method: "GET",
+const createNewSchedules = async (Name, Email, selectedId, Time, Duration, Notes) => {
+  const res = await fetch("http://ip21at1.sit.kmutt.ac.th:5000/api/event", {
+    method: "POST",
     headers: {
       "content-type": "application/json",
     },
     body: JSON.stringify({
-      src: newSrc,
-      name: newName,
-      details: newDetails,
-      GPS: newGPS,
+      bookingName: Name,
+      bookingEmail: Email,
+      categoryId: selectedId,
+      eventStartTime: Time,
+      eventDuration: Duration,
+      eventNotes:Notes
     }),
   });
   if (res.status === 201) {
-    const addedCentral = await res.json();
-    Central.value.push(addedCentral);
+    const addedSchedules = await res.json();
+    schedules.value.push(addedSchedules);
     console.log("added sucessfully");
   } else console.log("error, cannot be added");
 
-  EditCentral.value = {};
 };
 
 onBeforeMount(async () => {
+	await getSchedules(), getCategorys();
+});
+onBeforeUpdate(async () => {
 	await getSchedules();
 });
 </script>
@@ -64,7 +78,9 @@ onBeforeMount(async () => {
 	<div id="content-section">
 		<schedules
 			:content="schedules"
+      :category="category"
 			@delete="removeSchedules"
+      @create="createNewSchedules"
 			class="grid justify-center pt-2"
 		/>
 	</div>
