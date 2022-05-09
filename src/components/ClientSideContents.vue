@@ -1,4 +1,4 @@
-<script setup>
+<!-- <script setup>
 import { ref, onBeforeMount } from "vue";
 import VEdit from "./buttons/VEdit.vue";
 import VDelete from "./buttons/VDelete.vue";
@@ -98,4 +98,4 @@ onBeforeMount(async () => {
 	width: 500px;
 	background-color: #ede6db;
 }
-</style>
+</style> -->
