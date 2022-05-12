@@ -10,7 +10,7 @@ const schedules = ref([]);
 
 // GET
 const getSchedules = async () => {
-  const res = await fetch(import.meta.env.VITE_BASE_URL+"api/event");
+  const res = await fetch(import.meta.env.BASE_URL + "api/event");
   if (res.status === 200) {
     schedules.value = await res.json();
   } else console.log("error, cannot get data");
@@ -23,7 +23,7 @@ onBeforeMount(async () => {
 const removeSchedules = async (removeContentID) => {
   if (confirm("Do you really want to delete")) {
     const res = await fetch(
-      `${import.meta.env.VITE_BASE_URL}api/event/${removeContentID}`,
+      import.meta.env.BASE_URL + `api/event/${removeContentID}`,
       {
         method: "DELETE",
       }
@@ -46,7 +46,7 @@ const createNewSchedules = async (
   Duration,
   Notes
 ) => {
-  const res = await fetch(import.meta.env.VITE_BASE_URL+"api/event", {
+  const res = await fetch(import.meta.env.BASE_URL + "api/event", {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -60,8 +60,10 @@ const createNewSchedules = async (
       eventNotes: Notes,
     }),
   });
-  if (res.status === 201) {
-    const addedSchedules = await res.json();
+  if (res.status === 200) {
+    const addedSchedules = await fetch(import.meta.env.BASE_URL + "at1/api/event");
+    if (addedSchedules.status === 200) {
+    schedules.value = await addedSchedules.json();
     schedules.value.push(addedSchedules);
     console.log(addedSchedules);
   } else console.log("error, cannot be added");
