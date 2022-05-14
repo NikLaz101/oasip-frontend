@@ -5,7 +5,7 @@ import {
 import Homepage from "../views/Homepage.vue";
 import Contents from "../views/Contents.vue";
 
-const history = createWebHistory(import.meta.env.VITE_BASE_URL);
+const history = createWebHistory();
 const routes = [{
     path: "/",
     name: "homepage",

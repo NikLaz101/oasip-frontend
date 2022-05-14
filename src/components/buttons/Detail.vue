@@ -1,7 +1,8 @@
 <script setup>
 import moment from "moment";
+import { ref } from "vue";
 
-defineEmits(["moreDetail"]);
+defineEmits(["moreDetail", "editDetail"]);
 defineProps({
   detail: {
     type: Object,
@@ -9,11 +10,19 @@ defineProps({
   },
 });
 
+const edit = ref(false);
 </script>
 
 <template>
-  <label for="my-modal-3" class="btn modal-button" @click="$emit('moreDetail')"
-    >Detail</label>
+  <label
+    for="my-modal-3"
+    class="btn modal-button"
+    @click="
+      $emit('moreDetail');
+      edit = false;
+    "
+    >Detail</label
+  >
   <input type="checkbox" id="my-modal-3" class="modal-toggle" />
   <div class="modal">
     <div class="modal-box relative">
@@ -27,6 +36,12 @@ defineProps({
           <tr>
             <td></td>
             <td class="text-base font-bold">DETAIL</td>
+            <td>
+              <!-- EDIT -->
+              <button v-show="!edit" class="btn" @click="edit = !edit">
+                Edit
+              </button>
+            </td>
           </tr>
           <tr>
             <td>Name</td>
@@ -48,12 +63,13 @@ defineProps({
           </tr>
           <tr>
             <td>DATE</td>
-            <td>
+            <td v-show="!edit">
               {{
-                moment(detail.eventStartTime).format(
-                  "D MMMM YYYY, h:mm:ss A"
-                )
+                moment(detail.eventStartTime).format("D MMMM YYYY, h:mm:ss A")
               }}
+            </td>
+            <td v-show="edit">
+              <input type="datetime-local" v-model="detail.eventStartTime" />
             </td>
           </tr>
           <tr>
@@ -64,11 +80,42 @@ defineProps({
           </tr>
           <tr>
             <td>NOTE</td>
-            <td v-if="detail.eventNotes != null">
+            <td v-show="!edit" v-if="detail.eventNotes != null">
               {{ detail.eventNotes }}
             </td>
-            <td v-else class="opacity-50">
+            <td v-show="!edit" v-else class="opacity-50">
               <b>No messages</b>
+            </td>
+            <td v-show="edit">
+              <textarea
+                cols="30"
+                rows="5"
+                v-model="detail.eventNotes"
+              ></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              <!-- Edit -->
+              <label
+                for="my-modal-3"
+                class="btn m-2"
+                v-show="edit"
+                @click="
+                  $emit(
+                    'editDetail',
+                    detail.id,
+                    detail.eventStartTime,
+                    detail.eventNotes
+                  );
+                  edit = !edit;
+                "
+                >OK</label
+              >
+              <button class="btn m-2" v-show="edit" @click="edit = !edit">
+                Cancel
+              </button>
             </td>
           </tr>
         </tbody>
@@ -77,4 +124,4 @@ defineProps({
   </div>
 </template>
 
-<style></style>
+<style scoped></style>

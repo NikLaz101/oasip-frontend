@@ -7,10 +7,11 @@ import Delete from "./buttons/Delete.vue";
 import Navbar from "./buttons/Navbar.vue";
 
 const schedules = ref([]);
+const URL = "http://intproj21.sit.kmutt.ac.th/at1/api/event";
 
 // GET
 const getSchedules = async () => {
-  const res = await fetch(import.meta.env.VITE_BASE_URL+"api/event");
+  const res = await fetch(URL);
   if (res.status === 200) {
     schedules.value = await res.json();
   } else console.log("error, cannot get data");
@@ -22,12 +23,9 @@ onBeforeMount(async () => {
 //DELETE
 const removeSchedules = async (removeContentID) => {
   if (confirm("Do you really want to delete")) {
-    const res = await fetch(
-      `${import.meta.env.VITE_BASE_URL}api/event/${removeContentID}`,
-      {
-        method: "DELETE",
-      }
-    );
+    const res = await fetch(URL + "/" + removeContentID, {
+      method: "DELETE",
+    });
     if (res.status === 200) {
       schedules.value = schedules.value.filter(
         (schedules) => schedules.id !== removeContentID
@@ -38,15 +36,9 @@ const removeSchedules = async (removeContentID) => {
 };
 
 // POST
-const createNewSchedules = async (
-  Name,
-  Email,
-  selectedId,
-  Time,
-  Duration,
-  Notes
+const createNewSchedules = async (Name, Email, selectedId, Time, Duration, Notes
 ) => {
-  const res = await fetch(import.meta.env.VITE_BASE_URL+"api/event", {
+  const res = await fetch(URL, {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -60,23 +52,40 @@ const createNewSchedules = async (
       eventNotes: Notes,
     }),
   });
-  if (res.status === 201) {
-    const addedSchedules = await res.json();
-    schedules.value.push(addedSchedules);
-    console.log(addedSchedules);
+  if (res.status === 200) {
+    getSchedules();
   } else console.log("error, cannot be added");
 };
-// const newDetail = computed(() => {
-//   return {
-//     bookingName: props.content.bookingName,
-//     bookingEmail: props.content.bookingEmail,
-//     categoryId: props.content.categoryId,
-//     categoryName: props.content.categoryName,
-//     eventStartTime: props.content.eventStartTime,
-//     eventDuration: props.content.eventDuration,
-//     eventNotes: props.content.eventNotes,
-//   };
-// });
+
+// EDIT
+const modifySchedules = async (newid, newtime, newnotes) => {
+  const res = await fetch(URL + "/" + newid, {
+    method: "PUT",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      eventStartTime: newtime,
+      eventNotes: newnotes,
+    }),
+  });
+
+  if (res.status === 200) {
+    getSchedules();
+    const modify = await res.json();
+    schedules.value = schedules.value.map((schedules) =>
+      schedules.id === modify.id
+        ? {
+            ...schedules,
+            eventStartTime: newtime,
+            eventNotes: newnotes
+          }
+        : schedules
+    );
+
+    console.log("edited successfully");
+  } else console.log("error, cannot edit");
+};
 
 const currentDetail = ref({});
 const moreDetail = (curbookingId) => {
@@ -95,11 +104,7 @@ const moreDetail = (curbookingId) => {
             <Navbar />
             <th>
               <!-- Create -->
-              <Create
-                @create="
-                  createNewSchedules
-                "
-              />
+              <Create @create="createNewSchedules" />
             </th>
           </tr>
           <!-- Detail  -->
@@ -121,9 +126,7 @@ const moreDetail = (curbookingId) => {
               }}
             </td>
 
-            <td class="p-10 text-xl">
-              {{ contents.eventDuration }} minute
-            </td>
+            <td class="p-10 text-xl">{{ contents.eventDuration }} minute</td>
 
             <td>
               <!-- Delete -->
@@ -133,6 +136,7 @@ const moreDetail = (curbookingId) => {
                 <Detail
                   @moreDetail="moreDetail(contents)"
                   :detail="currentDetail"
+                  @editDetail="modifySchedules"
                 />
               </div>
             </td>

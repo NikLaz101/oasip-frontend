@@ -2,7 +2,7 @@
 import { ref, computed, onBeforeMount } from "vue";
 
 defineEmits(["create"]);
-const props = defineProps({
+defineProps({
   create: {
     type: Object,
     require: true,
@@ -13,7 +13,7 @@ const category = ref([]);
 
 // GET
 const getCategories = async () => {
-  const res = await fetch("http://ip21at1.sit.kmutt.ac.th:5000/api/category");
+  const res = await fetch("http://10.4.56.81:5000/api/category");
   if (res.status === 200) {
     category.value = await res.json();
   } else console.log("error, cannot get data");
