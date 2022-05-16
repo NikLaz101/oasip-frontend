@@ -19,6 +19,7 @@ const getSchedules = async () => {
 onBeforeMount(async () => {
   await getSchedules();
 });
+
 //DELETE
 const removeSchedules = async (removeContentID) => {
   if (confirm("Do you really want to delete")) {
@@ -60,30 +61,47 @@ const createNewSchedules = async (
       eventNotes: Notes,
     }),
   });
-  if (res.status === 200) {
-    const addedSchedules = await fetch(import.meta.env.BASE_URL + "at1/api/event");
-    if (addedSchedules.status === 200) {
-    schedules.value = await addedSchedules.json();
-    schedules.value.push(addedSchedules);
-    console.log(addedSchedules);
+  if (res.status === 201) {
+    getSchedules();
+    console.log(schedules.value);
   } else console.log("error, cannot be added");
 };
-// const newDetail = computed(() => {
-//   return {
-//     bookingName: props.content.bookingName,
-//     bookingEmail: props.content.bookingEmail,
-//     categoryId: props.content.categoryId,
-//     categoryName: props.content.categoryName,
-//     eventStartTime: props.content.eventStartTime,
-//     eventDuration: props.content.eventDuration,
-//     eventNotes: props.content.eventNotes,
-//   };
-// });
+
+// EDIT
+const modifySchedules = async (newid, newtime, newnotes) => {
+  const res = await fetch(import.meta.env.BASE_URL + "api/event/" + newid, {
+    method: "PUT",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      eventStartTime: newtime,
+      eventNotes: newnotes,
+    }),
+  });
+
+  if (res.status === 201) {
+    getSchedules();
+    const modify = await res.json();
+    schedules.value = schedules.value.map((schedules) =>
+      schedules.id === modify.id
+        ? {
+            ...schedules,
+            eventStartTime: newtime,
+            eventNotes: newnotes
+          }
+        : schedules
+    );
+
+    console.log("edited successfully");
+  } else console.log("error, cannot edit");
+};
 
 const currentDetail = ref({});
 const moreDetail = (curbookingId) => {
   currentDetail.value = curbookingId;
 };
+
 </script>
 
 <template>
@@ -135,6 +153,7 @@ const moreDetail = (curbookingId) => {
                 <Detail
                   @moreDetail="moreDetail(contents)"
                   :detail="currentDetail"
+                  @editDetail="modifySchedules"
                 />
               </div>
             </td>
