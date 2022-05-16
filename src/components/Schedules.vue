@@ -7,10 +7,15 @@ import Delete from "./buttons/Delete.vue";
 import Navbar from "./buttons/Navbar.vue";
 
 const schedules = ref([]);
+const URL = "http://intproj21.sit.kmutt.ac.th/at1/api/event";
 
 // GET
 const getSchedules = async () => {
+<<<<<<< HEAD
   const res = await fetch(import.meta.env.BASE_URL + "api/event");
+=======
+  const res = await fetch(URL);
+>>>>>>> f190333ae447eda6ea1cf035446f031b564b6b77
   if (res.status === 200) {
     schedules.value = await res.json();
   } else console.log("error, cannot get data");
@@ -23,12 +28,18 @@ onBeforeMount(async () => {
 //DELETE
 const removeSchedules = async (removeContentID) => {
   if (confirm("Do you really want to delete")) {
+<<<<<<< HEAD
     const res = await fetch(
       import.meta.env.BASE_URL + `api/event/${removeContentID}`,
       {
         method: "DELETE",
       }
     );
+=======
+    const res = await fetch(URL + "/" + removeContentID, {
+      method: "DELETE",
+    });
+>>>>>>> f190333ae447eda6ea1cf035446f031b564b6b77
     if (res.status === 200) {
       schedules.value = schedules.value.filter(
         (schedules) => schedules.id !== removeContentID
@@ -39,15 +50,13 @@ const removeSchedules = async (removeContentID) => {
 };
 
 // POST
-const createNewSchedules = async (
-  Name,
-  Email,
-  selectedId,
-  Time,
-  Duration,
-  Notes
+const createNewSchedules = async (Name, Email, selectedId, Time, Duration, Notes
 ) => {
+<<<<<<< HEAD
   const res = await fetch(import.meta.env.BASE_URL + "api/event", {
+=======
+  const res = await fetch(URL, {
+>>>>>>> f190333ae447eda6ea1cf035446f031b564b6b77
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -61,15 +70,24 @@ const createNewSchedules = async (
       eventNotes: Notes,
     }),
   });
+<<<<<<< HEAD
   if (res.status === 201) {
     getSchedules();
     console.log(schedules.value);
+=======
+  if (res.status === 200) {
+    getSchedules();
+>>>>>>> f190333ae447eda6ea1cf035446f031b564b6b77
   } else console.log("error, cannot be added");
 };
 
 // EDIT
 const modifySchedules = async (newid, newtime, newnotes) => {
+<<<<<<< HEAD
   const res = await fetch(import.meta.env.BASE_URL + "api/event/" + newid, {
+=======
+  const res = await fetch(URL + "/" + newid, {
+>>>>>>> f190333ae447eda6ea1cf035446f031b564b6b77
     method: "PUT",
     headers: {
       "content-type": "application/json",
@@ -80,7 +98,11 @@ const modifySchedules = async (newid, newtime, newnotes) => {
     }),
   });
 
+<<<<<<< HEAD
   if (res.status === 201) {
+=======
+  if (res.status === 200) {
+>>>>>>> f190333ae447eda6ea1cf035446f031b564b6b77
     getSchedules();
     const modify = await res.json();
     schedules.value = schedules.value.map((schedules) =>
@@ -115,11 +137,7 @@ const moreDetail = (curbookingId) => {
             <Navbar />
             <th>
               <!-- Create -->
-              <Create
-                @create="
-                  createNewSchedules
-                "
-              />
+              <Create @create="createNewSchedules" />
             </th>
           </tr>
           <!-- Detail  -->
@@ -141,9 +159,7 @@ const moreDetail = (curbookingId) => {
               }}
             </td>
 
-            <td class="p-10 text-xl">
-              {{ contents.eventDuration }} minute
-            </td>
+            <td class="p-10 text-xl">{{ contents.eventDuration }} minute</td>
 
             <td>
               <!-- Delete -->
