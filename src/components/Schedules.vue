@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onBeforeMount } from "vue";
+import { ref, onBeforeMount } from "vue";
 import moment from "moment";
 import Detail from "./buttons/Detail.vue";
 import Create from "./buttons/Create.vue";
@@ -17,9 +17,11 @@ const getSchedules = async () => {
   } else console.log("error, cannot get data");
 };
 
+
 onBeforeMount(async () => {
   await getSchedules();
 });
+
 //DELETE
 const removeSchedules = async (removeContentID) => {
   if (confirm("Do you really want to delete")) {
@@ -33,28 +35,6 @@ const removeSchedules = async (removeContentID) => {
       console.log("deleted successfullly");
     } else console.log("error, cannot delete");
   }
-};
-
-// POST
-const createNewSchedules = async (Name, Email, selectedId, Time, Duration, Notes
-) => {
-  const res = await fetch(URL, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      bookingName: Name,
-      bookingEmail: Email,
-      categoryId: selectedId,
-      eventStartTime: Time,
-      eventDuration: Duration,
-      eventNotes: Notes,
-    }),
-  });
-  if (res.status === 200) {
-    getSchedules();
-  } else console.log("error, cannot be added");
 };
 
 // EDIT
@@ -97,14 +77,14 @@ const moreDetail = (curbookingId) => {
   <div id="contents-list" v-cloak class="pt-20">
     <h1 class="text-5xl font-medium py-5">Schedules Event</h1>
     <div class="overflow-y-scroll table-content">
-      <table class="table table-zebra w-full rounded-full">
+      <table class="table table-zebra w-full rounded-full break-all">
         <thead>
           <tr>
             <!-- Narbar -->
             <Navbar />
             <th>
               <!-- Create -->
-              <Create @create="createNewSchedules" />
+              <Create />
             </th>
           </tr>
           <!-- Detail  -->
@@ -114,7 +94,7 @@ const moreDetail = (curbookingId) => {
         </div>
         <tbody v-else>
           <tr v-for="contents in schedules" :key="contents.id">
-            <td class="p-10 text-xl">{{ contents.bookingName }}</td>
+            <td class="p-10 text-xl w-1/5 m-auto break-all">{{ contents.bookingName }}</td>
 
             <td class="p-10 text-xl">
               {{ contents.categoryName }}
