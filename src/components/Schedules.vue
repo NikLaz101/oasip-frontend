@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onBeforeMount } from "vue";
+import { ref, onBeforeMount } from "vue";
 import moment from "moment";
 import Detail from "./buttons/Detail.vue";
 import Create from "./buttons/Create.vue";
@@ -35,29 +35,6 @@ const removeSchedules = async (removeContentID) => {
       console.log("deleted successfullly");
     } else console.log("error, cannot delete");
   }
-};
-
-// POST
-const createNewSchedules = async (Name, Email, selectedId, Time, Duration, Notes
-) => {
-  const res = await fetch(import.meta.env.BASE_URL + "api/event", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      bookingName: Name,
-      bookingEmail: Email,
-      categoryId: selectedId,
-      eventStartTime: Time,
-      eventDuration: Duration,
-      eventNotes: Notes,
-    }),
-  });
-  if (res.status === 201) {
-    getSchedules();
-    console.log(schedules.value);
-  } else console.log("error, cannot be added");
 };
 
 // EDIT
@@ -108,7 +85,7 @@ const moreDetail = (curbookingId) => {
             <Navbar />
             <th>
               <!-- Create -->
-              <Create @create="createNewSchedules" />
+              <Create />
             </th>
           </tr>
           <!-- Detail  -->
