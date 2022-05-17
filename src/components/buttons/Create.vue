@@ -1,16 +1,7 @@
 <script setup>
-import { ref, onBeforeMount, computed } from "vue";
+import { ref, onBeforeMount } from "vue";
 
 const error = ref({});
-// const errors = computed(() => {
-//   return {
-//   bookingName: props.error.bookingName,
-//   bookingEmail: props.error.bookingEmail,
-//   categoryName: props.error.categoryName,
-//   eventStartTime: props.error.eventStartTime,
-//   eventNotes: props.error.eventNotes,
-//   }
-// });
 const category = ref([]);
 const URLC = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
 const URLE = "http://intproj21.sit.kmutt.ac.th/at1/api/event";
