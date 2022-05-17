@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onBeforeMount } from "vue";
+import { ref, onBeforeMount } from "vue";
 import moment from "moment";
 import Detail from "./buttons/Detail.vue";
 import Create from "./buttons/Create.vue";
@@ -21,6 +21,7 @@ const getSchedules = async () => {
 onBeforeMount(async () => {
     await getSchedules();
 });
+
 //DELETE
 const removeSchedules = async (removeContentID) => {
     if (confirm("Do you really want to delete")) {
@@ -34,34 +35,6 @@ const removeSchedules = async (removeContentID) => {
             console.log("deleted successfullly");
         } else console.log("error, cannot delete");
     }
-};
-
-// POST
-const createNewSchedules = async (
-    Name,
-    Email,
-    selectedId,
-    Time,
-    Duration,
-    Notes
-) => {
-    const res = await fetch(URL, {
-        method: "POST",
-        headers: {
-            "content-type": "application/json",
-        },
-        body: JSON.stringify({
-            bookingName: Name,
-            bookingEmail: Email,
-            categoryId: selectedId,
-            eventStartTime: Time,
-            eventDuration: Duration,
-            eventNotes: Notes,
-        }),
-    });
-    if (res.status === 200) {
-        getSchedules();
-    } else console.log("error, cannot be added");
 };
 
 // EDIT
@@ -101,65 +74,60 @@ const moreDetail = (curbookingId) => {
 </script>
 
 <template>
-    <div id="contents-list" v-cloak class="p-20">
+    <div id="contents-list" v-cloak class="px-10 py-5">
         <h1 class="text-5xl font-medium py-5">Schedules Event</h1>
-            <table class="table-zebra table-layout table-element">
-                <thead class="table-header bg-base-200">
-                    <tr>
-                        <Navbar/>
-                        <th>
-                            <Create @create="createNewSchedules" />
-                        </th>
-                    </tr>
-                </thead>
-                <div v-if="schedules < 1" class="text-5xl pt-20" v-cloak>
-                    No Scheduled Events
-                </div>
-                <tbody v-else>
-                    <tr v-for="contents in schedules" :key="contents.id">
-                        <td class="p-10 text-xl"><div class="box-element break-words">{{ contents.bookingName }}</div></td>
-                        <td class="p-10 text-xl">
-                            <div class="pt-2">
-                                {{ contents.categoryName }}
-                            </div>
-                        </td>
-
-                        <td class="p-10 text-xl">
-                            {{
-                                moment(contents.eventStartTime).format(
-                                    "D MMMM YYYY, h:mm:ss A"
-                                )
-                            }}
-                        </td>
-
-                        <td class="p-10 text-xl">
-                            {{ contents.eventDuration }} minute
-                        </td>
-
-                        <td>
-                            <div id="showDetail">
-                                <Detail
-                                    @moreDetail="moreDetail(contents)"
-                                    :detail="currentDetail"
-                                    @editDetail="modifySchedules"
-                                />
-
-                                <Delete
-                                    @delete="removeSchedules(contents.id)"
-                                />
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div>
-        </div>
-        <button @click="isModalOn = !isModalOn" class="btn">dsdsds</button>
-            <div v-show="isModalOn" class="modal">
-                <div class="modal-content">fcdfd</div>
-                <p>tong</p>
+        <table class="table-zebra table-layout table-element">
+            <thead class="table-header bg-base-200">
+                <tr>
+                    <Navbar />
+                    <th>
+                        <Create />
+                    </th>
+                </tr>
+            </thead>
+            <div v-if="schedules < 1" class="text-5xl pt-20" v-cloak>
+                No Scheduled Events
             </div>
-        </div>
+            <tbody v-else>
+                <tr v-for="contents in schedules" :key="contents.id">
+                    <td class="p-10 text-xl">
+                        <div class="box-element break-words">
+                            {{ contents.bookingName }}
+                        </div>
+                    </td>
+                    <td class="p-10 text-xl">
+                        <div class="pt-2">
+                            {{ contents.categoryName }}
+                        </div>
+                    </td>
+
+                    <td class="p-10 text-xl">
+                        {{
+                            moment(contents.eventStartTime).format(
+                                "D MMMM YYYY, h:mm:ss A"
+                            )
+                        }}
+                    </td>
+
+                    <td class="p-10 text-xl">
+                        {{ contents.eventDuration }} minute
+                    </td>
+
+                    <td>
+                        <div id="showDetail">
+                            <Detail
+                                @moreDetail="moreDetail(contents)"
+                                :detail="currentDetail"
+                                @editDetail="modifySchedules"
+                            />
+
+                            <Delete @delete="removeSchedules(contents.id)" />
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </template>
 
 <style scoped>
@@ -175,7 +143,7 @@ table {
     text-align: left;
     position: relative;
     border-collapse: collapse;
-    border-radius:6px;
+    border-radius: 6px;
 }
 
 input,
@@ -190,14 +158,14 @@ textarea {
     height: 100px;
 }
 .table-layout {
-  table-layout: fixed;
-  width: 100%;  
+    table-layout: fixed;
+    width: 100%;
 }
 .box-element {
-    width:250px;
+    width: 250px;
 }
 .table-element {
-  height: 100px;
+    height: 100px;
 }
 .modal-content {
     background-color: #ffffff;

@@ -5,7 +5,6 @@ import Schedules from "../components/Schedules.vue";
 <template>
 	<div id="content-section">
 		<schedules
-			class="grid justify-center pt-2"
 		/>
 	</div>
 </template>
