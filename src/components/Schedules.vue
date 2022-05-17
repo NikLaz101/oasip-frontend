@@ -7,8 +7,6 @@ import Delete from "./buttons/Delete.vue";
 import Navbar from "./buttons/Navbar.vue";
 
 const schedules = ref([]);
-const URL = "http://intproj21.sit.kmutt.ac.th/at1/api/event";
-
 // GET
 const getSchedules = async () => {
   const res = await fetch(import.meta.env.BASE_URL + "api/event");
