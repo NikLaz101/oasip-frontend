@@ -125,7 +125,7 @@ const newDuration = () => {
       </table>
 
       <div class="modal-action">
-        <label
+        <label for="my-modal"
           @click="
             $emit('create',Name, Email, selectedId, Time, Duration, Notes);
           "
