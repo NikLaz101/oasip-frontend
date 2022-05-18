@@ -6,6 +6,7 @@ import Create from "./buttons/Create.vue";
 import Delete from "./buttons/Delete.vue";
 import Navbar from "./buttons/Navbar.vue";
 
+const error = ref({});
 const schedules = ref([]);
 const URL = "http://intproj21.sit.kmutt.ac.th/at1/api/event";
 
@@ -16,7 +17,6 @@ const getSchedules = async () => {
     schedules.value = await res.json();
   } else console.log("error, cannot get data");
 };
-
 
 onBeforeMount(async () => {
   await getSchedules();
@@ -65,6 +65,38 @@ const modifySchedules = async (newid, newtime, newnotes) => {
   } else console.log("error, cannot edit");
 };
 
+// POST
+const createNewSchedules = async (
+  Name,
+  Email,
+  selectedId,
+  Time,
+  Duration,
+  Notes
+) => {
+  const res = await fetch(URL, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      bookingName: Name,
+      bookingEmail: Email,
+      categoryId: selectedId,
+      eventStartTime: Time,
+      eventDuration: Duration,
+      eventNotes: Notes,
+    }),
+  });
+  if (res.status === 201) {
+    getSchedules();
+    error.value = {};
+  } else if (res.status === 400) {
+    error.value = await res.json();
+    console.log(error.value);
+  } else console.log("error, cannot be added");
+};
+
 const currentDetail = ref({});
 const moreDetail = (curbookingId) => {
   currentDetail.value = curbookingId;
@@ -82,7 +114,8 @@ const moreDetail = (curbookingId) => {
             <Navbar />
             <th>
               <!-- Create -->
-              <Create @click:action="getSchedules()" />
+              <Create @create="createNewSchedules"
+                :error="error" />
             </th>
           </tr>
           <!-- Detail  -->

@@ -1,14 +1,19 @@
 <script setup>
 import { ref, onBeforeMount } from "vue";
-defineEmits(["click:action"]);
-const error = ref({});
+
+defineEmits(["create"]);
+defineProps({
+  error: {
+    type: Object,
+    require: true,
+  },
+});
 const category = ref([]);
-const URLC = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
-const URLE = "http://intproj21.sit.kmutt.ac.th/at1/api/event";
+const URL = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
 
 // GET
 const getCategories = async () => {
-  const res = await fetch(URLC);
+  const res = await fetch(URL);
   if (res.status === 200) {
     category.value = await res.json();
   } else console.log("error, cannot get data");
@@ -17,37 +22,6 @@ const getCategories = async () => {
 onBeforeMount(async () => {
   await getCategories();
 });
-
-// POST
-const createNewSchedules = async (
-  Name,
-  Email,
-  selectedId,
-  Time,
-  Duration,
-  Notes
-) => {
-  const res = await fetch(URLE, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      bookingName: Name,
-      bookingEmail: Email,
-      categoryId: selectedId,
-      eventStartTime: Time,
-      eventDuration: Duration,
-      eventNotes: Notes,
-    }),
-  });
-  if (res.status === 201) {
-    error.value = {};
-  } else if (res.status === 400) {
-    error.value = await res.json();
-    console.log(error.value);
-  } else console.log("error, cannot be added");
-};
 
 const Name = ref();
 const Email = ref();
@@ -67,7 +41,6 @@ const newDuration = () => {
     // console.log(Duration.value);
   });
 };
-
 </script>
 
 <template>
@@ -154,8 +127,7 @@ const newDuration = () => {
       <div class="modal-action">
         <label
           @click="
-            $emit('click:action');
-            createNewSchedules(Name, Email, selectedId, Time, Duration, Notes);
+            $emit('create',Name, Email, selectedId, Time, Duration, Notes);
           "
           class="btn"
           >Create</label
