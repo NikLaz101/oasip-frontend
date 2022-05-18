@@ -6,8 +6,8 @@ import Create from "./buttons/Create.vue";
 import Delete from "./buttons/Delete.vue";
 import Navbar from "./buttons/Navbar.vue";
 
+const error = ref({});
 const schedules = ref([]);
-const isModalOn = ref(false);
 const URL = "http://intproj21.sit.kmutt.ac.th/at1/api/event";
 
 // GET
@@ -39,30 +39,62 @@ const removeSchedules = async (removeContentID) => {
 
 // EDIT
 const modifySchedules = async (newid, newtime, newnotes) => {
-  const res = await fetch(URL + "/" + newid, {
-    method: "PUT",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      eventStartTime: newtime,
-      eventNotes: newnotes,
-    }),
-  });
-  if (res.status === 201) {
-    getSchedules();
-    const modify = await res.json();
-    schedules.value = schedules.value.map((schedules) =>
-      schedules.id === modify.id
-        ? {
-            ...schedules,
+    const res = await fetch(URL + "/" + newid, {
+        method: "PUT",
+        headers: {
+            "content-type": "application/json",
+        },
+        body: JSON.stringify({
             eventStartTime: newtime,
-            eventNotes: newnotes
-          }
-        : schedules
-    );
-    console.log("edited successfully");
-  } else console.log("error, cannot edit");
+            eventNotes: newnotes,
+        }),
+    });
+    if (res.status === 201) {
+        getSchedules();
+        const modify = await res.json();
+        schedules.value = schedules.value.map((schedules) =>
+            schedules.id === modify.id
+                ? {
+                      ...schedules,
+                      eventStartTime: newtime,
+                      eventNotes: newnotes,
+                  }
+                : schedules
+        );
+        console.log("edited successfully");
+    } else console.log("error, cannot edit");
+};
+
+// POST
+const createNewSchedules = async (
+    Name,
+    Email,
+    selectedId,
+    Time,
+    Duration,
+    Notes
+) => {
+    const res = await fetch(URL, {
+        method: "POST",
+        headers: {
+            "content-type": "application/json",
+        },
+        body: JSON.stringify({
+            bookingName: Name,
+            bookingEmail: Email,
+            categoryId: selectedId,
+            eventStartTime: Time,
+            eventDuration: Duration,
+            eventNotes: Notes,
+        }),
+    });
+    if (res.status === 201) {
+        getSchedules();
+        error.value = {};
+    } else if (res.status === 400) {
+        error.value = await res.json();
+        console.log(error.value);
+    } else console.log("error, cannot be added");
 };
 
 const currentDetail = ref({});
@@ -78,7 +110,7 @@ const moreDetail = (curbookingId) => {
                 <tr>
                     <Navbar />
                     <th>
-                        <Create />
+                        <Create @create="createNewSchedules" :error="error" />
                     </th>
                 </tr>
             </thead>

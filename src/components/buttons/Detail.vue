@@ -113,7 +113,7 @@ const isModalOn = ref(false);
                         </div>
                         <div
                             v-show="!edit"
-                            v-else
+                            v-else-if="typeof detail.eventNotes"
                             class="text-base font-medium opacity-50 py-2"
                         >
                             <b>No messages</b>
