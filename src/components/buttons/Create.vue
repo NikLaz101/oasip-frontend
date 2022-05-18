@@ -91,20 +91,20 @@ const newDuration = () => {
                 <div class="flex justify-end">
                     <button class="close" @click="isModalOn = !isModalOn">x</button>
                 </div>
-                <form class="grid justify-center">
+                <div class="grid justify-center">
                     <label for="name">Name</label>
-                    <div class="pb-2">
-                        <input type="text" v-model="Name" maxlength="100" />
+                    <div class="py-3">
+                        <input type="text" v-model="Name" maxlength="100" class="bg-base-100 border-b-2 italic" placeholder="Your name" />
                         <p class="error">{{ error.bookingName }}</p>
                     </div>
 
                     <label for="Email">Email</label>
-                    <div class="pb-2">
-                        <input type="text" v-model="Email" />
+                    <div class="py-3">
+                        <input type="text" v-model="Email" class="bg-base-100 border-b-2 italic" placeholder="Your email"  />
                         <p class="error">{{ error.bookingEmail }}</p>
                     </div>
                     <label for="clinics">Clinic</label>
-                    <div class="pb-2">
+                    <div class="py-3">
                         <select
                             name="clinics"
                             class="text-black"
@@ -122,30 +122,33 @@ const newDuration = () => {
                         <p class="error">{{ error.categoryName }}</p>
                     </div >
                     <label for="Date">Date</label>
-                    <div class="pb-2">
-                        <input type="datetime-local" v-model="Time" />
+                    <div class="py-3">
+                        <input type="datetime-local" v-model="Time" class="text-black"/>
                         <p class="error">{{ error.eventStartTime }}</p>
                     </div>
                     <label for="Duration">Duration</label>
-                    <div class="pb-2">
+                    <div class="py-3">
                         <input
-                            class="auto-fill"
+                            class="bg-base-100 border-b-2 italic focus:outline-none"
                             readonly
                             type="text"
                             v-model="Duration"
+                            placeholder="Select your clinic"
                         />
                     </div>
                     <label for="Note">Note</label>
-                    <div class="pb-2">
+                    <div class="py-3">
                         <textarea
                             cols="50"
-                            rows="5"
+                            rows="2"
                             v-model="Notes"
                             maxlength="500"
+                            class="bg-base-100 border-b-2 italic"
+                            placeholder="Your message"
                         ></textarea>
                         <p class="error">{{ error.eventNotes }}</p>
                     </div>
-                </form>
+                </div>
                 <div class="flex justify-end pt-2">
                     <button
                         @click="
@@ -171,7 +174,7 @@ const newDuration = () => {
 <style>
 input,
 textarea {
-    color: rgb(0 0 0);
+    color: rgb(255, 255, 255);
 }
 .modal-content {
     margin: auto;

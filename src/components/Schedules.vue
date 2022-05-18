@@ -74,8 +74,7 @@ const moreDetail = (curbookingId) => {
 </script>
 
 <template>
-    <div id="contents-list" v-cloak class="px-10 py-5">
-        <h1 class="text-5xl font-medium py-5">Schedules Event</h1>
+    <div id="contents-list" v-cloak class="px-10 py-5 flex justify-center">
         <table class="table-zebra table-layout table-element">
             <thead class="table-header bg-base-200">
                 <tr>
@@ -154,12 +153,11 @@ textarea {
 .table-header {
     position: sticky;
     top: 0;
-    z-index: 9999;
     height: 100px;
 }
 .table-layout {
     table-layout: fixed;
-    width: 100%;
+    width: 90%;
 }
 .box-element {
     width: 250px;

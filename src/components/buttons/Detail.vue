@@ -33,9 +33,11 @@ const isModalOn = ref(false);
             <div class="flex justify-center">
                 <div>
                     <div
-                        class="box-element text-xl font-bold break-words flex justify-center"
+                        class="text-3xl font-bold flex justify-center"
                     >
-                        {{ detail.bookingName }}
+                    <p class="font-header">
+                      {{ detail.bookingName }}
+                    </p>
                         <button
                             v-show="!edit"
                             @click="edit = !edit"
@@ -57,22 +59,22 @@ const isModalOn = ref(false);
                             </svg>
                         </button>
                     </div>
-                    <div class="text-base font-medium grid justify-center pt-2">
+                    <div class="text-base font-medium grid justify-center py-2">
                         {{ detail.bookingEmail }}
                     </div>
                     <div class="grid justify-center">
                         <p
-                            class="text-lg font-bold grid justify-center pt-2 opacity-50"
+                            class="text-lg font-bold grid justify-center py-3 opacity-50"
                         >
                             Clinic
                         </p>
-                        <div class="font-header text-2xl font-bold pt-2">
+                        <div class="font-header text-2xl font-bold py-2">
                             {{ detail.categoryName }}
                         </div>
                     </div>
                     <div
                         v-show="!edit"
-                        class="text-base font-medium grid justify-center pt-2"
+                        class="text-base font-medium grid justify-center py-2"
                     >
                         {{
                             moment(detail.eventStartTime).format(
@@ -82,14 +84,14 @@ const isModalOn = ref(false);
                     </div>
                     <div
                         v-show="edit"
-                        class="text-base font-medium grid justify-center pt-2"
+                        class="text-base font-medium grid justify-center py-2"
                     >
                         <input
                             type="datetime-local"
                             v-model="detail.eventStartTime"
                         />
                     </div>
-                    <div class="text-xl font-bold grid justify-center pt-2">
+                    <div class="text-2xl font-bold grid justify-center py-2">
                         <div>
                             <span class="font-header">Duration : </span
                             ><span>{{ detail.eventDuration }} minutes</span>
@@ -97,7 +99,7 @@ const isModalOn = ref(false);
                     </div>
                     <div class="grid justify-center">
                         <p
-                            class="text-lg font-bold opacity-50 grid justify-center pt-2"
+                            class="text-lg font-bold opacity-50 grid justify-center py-3"
                         >
                             Note
                         </p>
@@ -111,7 +113,7 @@ const isModalOn = ref(false);
                         <div
                             v-show="!edit"
                             v-else
-                            class="text-base font-medium opacity-50 pt-2"
+                            class="text-base font-medium opacity-50 py-2"
                         >
                             <b>No messages</b>
                         </div>
@@ -120,6 +122,7 @@ const isModalOn = ref(false);
                                 cols="50"
                                 rows="5"
                                 v-model="detail.eventNotes"
+                                
                             ></textarea>
                         </div>
                     </div>
@@ -153,16 +156,10 @@ const isModalOn = ref(false);
 .font-header {
     color: #ff9d00;
 }
-.box-element {
-    @apply shadow-xl my-3 rounded-3xl;
-    width: fit-content;
-    padding: 10px 20px 10px 20px;
-    background-color: #ff9d00;
-}
 .modal-content {
     margin: auto;
     padding: 20px;
-    width: 500px;
+    width: 550px;
 }
 .modal-show {
     position: fixed;
