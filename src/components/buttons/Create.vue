@@ -177,7 +177,6 @@ const newDuration = () => {
                                 Duration,
                                 Notes
                             );
-                            error.value ? isModalOn : isModalOn= !isModalOn
                         "
                         class="btn"
                     >
