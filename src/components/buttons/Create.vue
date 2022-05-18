@@ -100,19 +100,17 @@ const newDuration = () => {
 
                     <label for="Email">Email</label>
                     <div class="py-3">
-                        <input type="text" v-model="Email" class="bg-base-100 border-b-2 italic" placeholder="Your email"  />
+                        <input type="text" v-model="Email" maxlength="50" class="bg-base-100 border-b-2 italic" placeholder="Your email"  />
                         <p class="error">{{ error.bookingEmail }}</p>
                     </div>
                     <label for="clinics">Clinic</label>
                     <div class="py-3">
                         <select
                             name="clinics"
-                            class="text-black"
+                            class=" bg-base-100 border-b-2 italic"
                             @change="newDuration"
                             v-model="Selected">
-                            <option value="" disabled selected>
-                                --Select your clinic--
-                            </option>
+                            
                             <option
                                 v-for="categorys in category"
                                 :value="categorys.eventCategoryName">
@@ -126,10 +124,10 @@ const newDuration = () => {
                         <input type="datetime-local" v-model="Time" class="text-black"/>
                         <p class="error">{{ error.eventStartTime }}</p>
                     </div>
-                    <label for="Duration">Duration</label>
+                    <label for="Duration">Duration (minutes)</label>
                     <div class="py-3">
                         <input
-                            class="bg-base-100 border-b-2 italic focus:outline-none"
+                            class="bg-base-100 border-b-2 italic focus:outline-none pointer-events-none"
                             readonly
                             type="text"
                             v-model="Duration"
@@ -143,7 +141,7 @@ const newDuration = () => {
                             rows="2"
                             v-model="Notes"
                             maxlength="500"
-                            class="bg-base-100 border-b-2 italic"
+                            class="bg-base-100 border-b-2 italic p-2"
                             placeholder="Your message"
                         ></textarea>
                         <p class="error">{{ error.eventNotes }}</p>

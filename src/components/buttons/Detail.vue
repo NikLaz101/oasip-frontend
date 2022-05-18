@@ -89,6 +89,7 @@ const isModalOn = ref(false);
                         <input
                             type="datetime-local"
                             v-model="detail.eventStartTime"
+                            class="text-black"
                         />
                     </div>
                     <div class="text-2xl font-bold grid justify-center py-2">
@@ -120,9 +121,9 @@ const isModalOn = ref(false);
                         <div v-show="edit" class="py-2">
                             <textarea
                                 cols="50"
-                                rows="5"
+                                rows="3"
                                 v-model="detail.eventNotes"
-                                
+                                class="text-black p-2"
                             ></textarea>
                         </div>
                     </div>
