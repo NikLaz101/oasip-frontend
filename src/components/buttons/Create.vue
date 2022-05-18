@@ -1,11 +1,10 @@
 <script setup>
 import { ref, onBeforeMount } from "vue";
-
+defineEmits(["click:action"]);
 const error = ref({});
 const category = ref([]);
 const URLC = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
 const URLE = "http://intproj21.sit.kmutt.ac.th/at1/api/event";
-
 
 // GET
 const getCategories = async () => {
@@ -20,7 +19,13 @@ onBeforeMount(async () => {
 });
 
 // POST
-const createNewSchedules = async (Name, Email, selectedId, Time, Duration, Notes
+const createNewSchedules = async (
+  Name,
+  Email,
+  selectedId,
+  Time,
+  Duration,
+  Notes
 ) => {
   const res = await fetch(URLE, {
     method: "POST",
@@ -36,14 +41,12 @@ const createNewSchedules = async (Name, Email, selectedId, Time, Duration, Notes
       eventNotes: Notes,
     }),
   });
-  if (res.status === 200) {
-    getSchedules();
-    error.value = {}
-  } else if(res.status === 400){
-    error.value = await res.json(); 
+  if (res.status === 201) {
+    error.value = {};
+  } else if (res.status === 400) {
+    error.value = await res.json();
     console.log(error.value);
-  }else
-    console.log("error, cannot be added");
+  } else console.log("error, cannot be added");
 };
 
 const Name = ref();
@@ -64,6 +67,7 @@ const newDuration = () => {
     // console.log(Duration.value);
   });
 };
+
 </script>
 
 <template>
@@ -121,7 +125,7 @@ const newDuration = () => {
                   {{ categorys.eventCategoryName }}
                 </option>
               </select>
-              <p id="error">{{ error.categoryName }}</p>
+              <p id="error">{{ error.categoryId }}</p>
             </form>
           </td>
         </tr>
@@ -150,7 +154,8 @@ const newDuration = () => {
       <div class="modal-action">
         <label
           @click="
-           createNewSchedules(Name, Email, selectedId, Time, Duration, Notes)
+            $emit('click:action');
+            createNewSchedules(Name, Email, selectedId, Time, Duration, Notes);
           "
           class="btn"
           >Create</label

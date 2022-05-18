@@ -49,8 +49,7 @@ const modifySchedules = async (newid, newtime, newnotes) => {
       eventNotes: newnotes,
     }),
   });
-
-  if (res.status === 200) {
+  if (res.status === 201) {
     getSchedules();
     const modify = await res.json();
     schedules.value = schedules.value.map((schedules) =>
@@ -62,7 +61,6 @@ const modifySchedules = async (newid, newtime, newnotes) => {
           }
         : schedules
     );
-
     console.log("edited successfully");
   } else console.log("error, cannot edit");
 };
@@ -84,7 +82,7 @@ const moreDetail = (curbookingId) => {
             <Navbar />
             <th>
               <!-- Create -->
-              <Create />
+              <Create @click:action="getSchedules()" />
             </th>
           </tr>
           <!-- Detail  -->
