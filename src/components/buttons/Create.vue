@@ -156,8 +156,8 @@ const newDuration = () => {
                                 selectedId,
                                 Time,
                                 Duration,
-                                Notes
-                            )
+                                Notes,
+                            ) 
                         "
                         class="btn"
                     >
