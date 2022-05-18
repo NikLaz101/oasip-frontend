@@ -131,7 +131,7 @@ const newDuration = () => {
                                 {{ categorys.eventCategoryName }}
                             </option>
                         </select>
-                        <p class="error">{{ error.categoryName }}</p>
+                        <p class="error">{{ error.categoryId }}</p>
                     </div>
                     <label for="Date">Date</label>
                     <div class="py-3">
@@ -177,6 +177,7 @@ const newDuration = () => {
                                 Duration,
                                 Notes
                             );
+                            getCategories()
                         "
                         class="btn"
                     >
