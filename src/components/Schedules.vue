@@ -39,32 +39,30 @@ const removeSchedules = async (removeContentID) => {
 
 // EDIT
 const modifySchedules = async (newid, newtime, newnotes) => {
-    const res = await fetch(URL + "/" + newid, {
-        method: "PUT",
-        headers: {
-            "content-type": "application/json",
-        },
-        body: JSON.stringify({
+  const res = await fetch(URL + "/" + newid, {
+    method: "PUT",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      eventStartTime: newtime,
+      eventNotes: newnotes,
+    }),
+  });
+  if (res.status === 201) {
+    getSchedules();
+    const modify = await res.json();
+    schedules.value = schedules.value.map((schedules) =>
+      schedules.id === modify.id
+        ? {
+            ...schedules,
             eventStartTime: newtime,
-            eventNotes: newnotes,
-        }),
-    });
-
-    if (res.status === 200) {
-        getSchedules();
-        const modify = await res.json();
-        schedules.value = schedules.value.map((schedules) =>
-            schedules.id === modify.id
-                ? {
-                      ...schedules,
-                      eventStartTime: newtime,
-                      eventNotes: newnotes,
-                  }
-                : schedules
-        );
-
-        console.log("edited successfully");
-    } else console.log("error, cannot edit");
+            eventNotes: newnotes
+          }
+        : schedules
+    );
+    console.log("edited successfully");
+  } else console.log("error, cannot edit");
 };
 
 const currentDetail = ref({});

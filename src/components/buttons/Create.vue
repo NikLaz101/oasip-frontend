@@ -1,6 +1,6 @@
 <script setup>
-import { ref, onBeforeMount, computed } from "vue";
-
+import { ref, onBeforeMount } from "vue";
+defineEmits(["click:action"]);
 const error = ref({});
 const isModalOn = ref(false);
 const category = ref([]);
@@ -42,8 +42,7 @@ const createNewSchedules = async (
             eventNotes: Notes,
         }),
     });
-    if (res.status === 200) {
-        getSchedules();
+    if (res.status === 201) {
         error.value = {};
     } else if (res.status === 400) {
         error.value = await res.json();
@@ -87,41 +86,60 @@ const newDuration = () => {
             CREATE
         </button>
         <div v-show="isModalOn" class="modal-show flex justify-center">
-            <div class="modal-content bg-base-100 rounded-2xl ">
+            <div class="modal-content bg-base-100 rounded-2xl">
                 <div class="flex justify-end">
-                    <button class="close" @click="isModalOn = !isModalOn">x</button>
+                    <button class="close" @click="isModalOn = !isModalOn">
+                        x
+                    </button>
                 </div>
                 <div class="grid justify-center">
                     <label for="name">Name</label>
                     <div class="py-3">
-                        <input type="text" v-model="Name" maxlength="100" class="bg-base-100 border-b-2 italic" placeholder="Your name" />
+                        <input
+                            type="text"
+                            v-model="Name"
+                            maxlength="100"
+                            class="bg-base-100 border-b-2 italic"
+                            placeholder="Your name"
+                        />
                         <p class="error">{{ error.bookingName }}</p>
                     </div>
 
                     <label for="Email">Email</label>
                     <div class="py-3">
-                        <input type="text" v-model="Email" maxlength="50" class="bg-base-100 border-b-2 italic" placeholder="Your email"  />
+                        <input
+                            type="text"
+                            v-model="Email"
+                            maxlength="50"
+                            class="bg-base-100 border-b-2 italic"
+                            placeholder="Your email"
+                        />
                         <p class="error">{{ error.bookingEmail }}</p>
                     </div>
                     <label for="clinics">Clinic</label>
                     <div class="py-3">
                         <select
                             name="clinics"
-                            class=" bg-base-100 border-b-2 italic"
+                            class="bg-base-100 border-b-2 italic"
                             @change="newDuration"
-                            v-model="Selected">
-                            
+                            v-model="Selected"
+                        >
                             <option
                                 v-for="categorys in category"
-                                :value="categorys.eventCategoryName">
+                                :value="categorys.eventCategoryName"
+                            >
                                 {{ categorys.eventCategoryName }}
                             </option>
                         </select>
                         <p class="error">{{ error.categoryName }}</p>
-                    </div >
+                    </div>
                     <label for="Date">Date</label>
                     <div class="py-3">
-                        <input type="datetime-local" v-model="Time" class="text-black"/>
+                        <input
+                            type="datetime-local"
+                            v-model="Time"
+                            class="text-black"
+                        />
                         <p class="error">{{ error.eventStartTime }}</p>
                     </div>
                     <label for="Duration">Duration (minutes)</label>
@@ -150,14 +168,16 @@ const newDuration = () => {
                 <div class="flex justify-end pt-2">
                     <button
                         @click="
+                            $emit('click:action');
                             createNewSchedules(
                                 Name,
                                 Email,
                                 selectedId,
                                 Time,
                                 Duration,
-                                Notes,
-                            ) 
+                                Notes
+                            );
+                            error.value ? isModalOn : isModalOn= !isModalOn
                         "
                         class="btn"
                     >
@@ -191,16 +211,16 @@ textarea {
     background-color: rgba(73, 73, 73, 0.4);
 }
 .close {
-  color: #aaaaaa;
-  font-size: 28px;
-  font-weight: bold;
+    color: #aaaaaa;
+    font-size: 28px;
+    font-weight: bold;
 }
 
 .close:hover,
 .close:focus {
-  color: rgb(82, 80, 80);
-  text-decoration: none;
-  cursor: pointer;
+    color: rgb(82, 80, 80);
+    text-decoration: none;
+    cursor: pointer;
 }
 .auto-fill {
     background-color: #b7babd;
