@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onBeforeMount } from "vue";
+defineEmits(["click:action"]);
 
 const error = ref({});
 const category = ref([]);
@@ -33,8 +34,7 @@ const createNewSchedules = async (Name, Email, selectedId, Time, Duration, Notes
       eventNotes: Notes,
     }),
   });
-  if (res.status === 200) {
-    getSchedules();
+  if (res.status === 201) {
     error.value = {}
   } else if(res.status === 400){
     error.value = await res.json(); 
@@ -146,7 +146,7 @@ const newDuration = () => {
 
       <div class="modal-action">
         <label
-          @click="
+          @click="$emit('click:action');
            createNewSchedules(Name, Email, selectedId, Time, Duration, Notes)
           "
           class="btn"

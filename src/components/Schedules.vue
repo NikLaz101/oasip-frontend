@@ -85,7 +85,7 @@ const moreDetail = (curbookingId) => {
             <Navbar />
             <th>
               <!-- Create -->
-              <Create />
+              <Create @click:action="getSchedules" />
             </th>
           </tr>
           <!-- Detail  -->
