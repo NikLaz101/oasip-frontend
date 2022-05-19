@@ -6,10 +6,12 @@ import Create from "./buttons/Create.vue";
 import Delete from "./buttons/Delete.vue";
 import Navbar from "./buttons/Navbar.vue";
 
+const error = ref({});
 const schedules = ref([]);
+
 // GET
 const getSchedules = async () => {
-  const res = await fetch(import.meta.env.BASE_URL + "api/event");
+  const res = await fetch(import.meta.env.VITE_BASE_URL + "api/event");
   if (res.status === 200) {
     schedules.value = await res.json();
   } else console.log("error, cannot get data");
@@ -18,16 +20,12 @@ const getSchedules = async () => {
 onBeforeMount(async () => {
   await getSchedules();
 });
-
 //DELETE
 const removeSchedules = async (removeContentID) => {
   if (confirm("Do you really want to delete")) {
-    const res = await fetch(
-      import.meta.env.BASE_URL + `api/event/${removeContentID}`,
-      {
-        method: "DELETE",
-      }
-    );
+    const res = await fetch(import.meta.env.VITE_BASE_URL + "api/event/" + removeContentID, {
+      method: "DELETE",
+    });
     if (res.status === 200) {
       schedules.value = schedules.value.filter(
         (schedules) => schedules.id !== removeContentID
@@ -39,7 +37,7 @@ const removeSchedules = async (removeContentID) => {
 
 // EDIT
 const modifySchedules = async (newid, newtime, newnotes) => {
-  const res = await fetch(import.meta.env.BASE_URL + "api/event/" + newid, {
+  const res = await fetch(import.meta.env.VITE_BASE_URL + "api/event/" + newid, {
     method: "PUT",
     headers: {
       "content-type": "application/json",
@@ -49,7 +47,6 @@ const modifySchedules = async (newid, newtime, newnotes) => {
       eventNotes: newnotes,
     }),
   });
-
   if (res.status === 201) {
     getSchedules();
     const modify = await res.json();
@@ -58,73 +55,146 @@ const modifySchedules = async (newid, newtime, newnotes) => {
         ? {
             ...schedules,
             eventStartTime: newtime,
-            eventNotes: newnotes
+            eventNotes: newnotes,
           }
         : schedules
     );
-
     console.log("edited successfully");
   } else console.log("error, cannot edit");
 };
 
+// POST
+const createNewSchedules = async (
+  Name,
+  Email,
+  selectedId,
+  Time,
+  Duration,
+  Notes
+) => {
+  const res = await fetch(import.meta.env.VITE_BASE_URL + "api/event", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      bookingName: Name,
+      bookingEmail: Email,
+      categoryId: selectedId,
+      eventStartTime: Time,
+      eventDuration: Duration,
+      eventNotes: (Notes.trim() == "" ? null : Notes.trim()),
+    }),
+  });
+  if (res.status === 201) {
+    getSchedules();
+    error.value = {};
+  } else if (res.status === 400) {
+    error.value = await res.json();
+    // console.log(error.value);
+    // console.log(JSON.stringify(error.value).length);
+  } else console.log("error, cannot be added");
+};
 const currentDetail = ref({});
 const moreDetail = (curbookingId) => {
   currentDetail.value = curbookingId;
 };
 
+const clinic = ref();
+const getClinic = async (e) => {
+  if(e !== 0){
+    const res = await fetch(import.meta.env.VITE_BASE_URL + "api/category/" + e);
+  if (res.status === 200) {
+    clinic.value = await res.json();
+    console.log(clinic.value);
+  } else console.log("error, cannot get data");
+}else {
+  clinic.value = undefined;
+}
+}
 </script>
 
 <template>
-  <div id="contents-list" v-cloak class="pt-20">
-    <h1 class="text-5xl font-medium py-5">Schedules Event</h1>
-    <div class="overflow-y-scroll table-content">
-      <table class="table table-zebra w-full rounded-full">
-        <thead>
-          <tr>
-            <!-- Narbar -->
-            <Navbar />
-            <th>
-              <!-- Create -->
-              <Create @click:action="getSchedules()" />
-            </th>
-          </tr>
-          <!-- Detail  -->
-        </thead>
-        <div v-if="schedules < 1" class="text-5xl pt-20" v-cloak>
-          No Scheduled Events
-        </div>
-        <tbody v-else>
-          <tr v-for="contents in schedules" :key="contents.id">
-            <td class="p-10 text-xl">{{ contents.bookingName }}</td>
-
-            <td class="p-10 text-xl">
+  <div id="contents-list" v-cloak class="px-10 py-5 flex justify-center">
+    <table class="table-zebra table-layout table-element">
+      <thead class="table-header bg-base-200">
+        <tr>
+          <Navbar @option="getClinic" />
+          <th>
+            <Create @create="createNewSchedules" :error="error" />
+          </th>
+        </tr>
+      </thead>
+      <div id="Noevent" v-if="schedules && clinic < 1" class="text-5xl pt-20" v-cloak>
+        No Scheduled Events
+      </div>
+      <tbody v-else>
+          <tr v-if="clinic == undefined" v-for="contents in schedules" :key="contents.id">
+          <td class="p-10 text-xl">
+            <div class="box-element break-words">
+              {{ contents.bookingName }}
+            </div>
+          </td>
+          <td class="p-10 text-xl">
+            <div class="pt-2">
               {{ contents.categoryName }}
-            </td>
+            </div>
+          </td>
 
-            <td class="p-10 text-xl">
-              {{
-                moment(contents.eventStartTime).format("D MMMM YYYY, h:mm:ss A")
-              }}
-            </td>
+          <td class="p-10 text-xl">
+            {{
+              moment(contents.eventStartTime).format("D MMMM YYYY, h:mm:ss A")
+            }}
+          </td>
 
-            <td class="p-10 text-xl">{{ contents.eventDuration }} minute</td>
+          <td class="p-10 text-xl">{{ contents.eventDuration }} minute</td>
 
-            <td>
-              <!-- Delete -->
-              <div id="showDetail">
-                <Delete @delete="removeSchedules(contents.id)" />
-                <!-- MoreDetails -->
-                <Detail
-                  @moreDetail="moreDetail(contents)"
-                  :detail="currentDetail"
-                  @editDetail="modifySchedules"
-                />
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+          <td>
+            <div id="showDetail">
+              <Detail
+                @moreDetail="moreDetail(contents)"
+                :detail="currentDetail"
+                @editDetail="modifySchedules"
+              />
+
+              <Delete @delete="removeSchedules(contents.id)" />
+            </div>
+          </td>
+        </tr>
+          <tr v-else v-for="contents in clinic">
+          <td class="p-10 text-xl">
+            <div class="box-element break-words">
+              {{ contents.bookingName }}
+            </div>
+          </td>
+          <td class="p-10 text-xl">
+            <div class="pt-2">
+              {{ contents.categoryName }}
+            </div>
+          </td>
+
+          <td class="p-10 text-xl">
+            {{
+              moment(contents.eventStartTime).format("D MMMM YYYY, h:mm:ss A")
+            }}
+          </td>
+
+          <td class="p-10 text-xl">{{ contents.eventDuration }} minute</td>
+
+          <td>
+            <div id="showDetail">
+              <Detail
+                @moreDetail="moreDetail(contents)"
+                :detail="currentDetail"
+                @editDetail="modifySchedules"
+              />
+
+              <Delete @delete="removeSchedules(contents.id)" />
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
@@ -132,34 +202,64 @@ const moreDetail = (curbookingId) => {
 [v-cloak] {
   display: none;
 }
-.box-element {
-  @apply my-3;
-  width: 1000px;
-  height: 10px;
-  background-color: #b3853d;
-}
+
 .textarea {
   @apply textarea-ghost focus:outline-none;
 }
-.table-content {
-  height: 600px;
+
+#Noevent {
+  text-align: center;
+  width: 100%;
+  position: absolute;
+  z-index: -1;
+
 }
-table th,
-#Name {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
-  z-index: 1;
+
+table {
+  text-align: left;
+  position: relative;
+  border-collapse: collapse;
+  border-radius: 6px;
 }
+
 input,
 textarea {
   color: rgb(0 0 0);
 }
-#size {
-  font-size: 1rem;
+
+.table-header {
+  position: sticky;
+  top: 0;
+  height: 100px;
 }
-.center {
-  margin-left: auto;
-  margin-right: auto;
+.table-layout {
+  table-layout: fixed;
+  width: 90%;
+}
+.box-element {
+  width: 250px;
+}
+.table-element {
+  height: 100px;
+}
+.modal-content {
+  background-color: #ffffff;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  height: 300px;
+}
+.modal {
+  position: fixed;
+  z-index: 1;
+  padding-top: 300px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 600px;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
 }
 </style>
