@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onBeforeMount, onMounted } from "vue";
+import { ref, onBeforeMount } from "vue";
 import moment from "moment";
 import Detail from "./buttons/Detail.vue";
 import Create from "./buttons/Create.vue";
@@ -9,6 +9,7 @@ import Navbar from "./buttons/Navbar.vue";
 const error = ref({});
 const schedules = ref([]);
 const URL = "http://intproj21.sit.kmutt.ac.th/at1/api/event";
+const URLC = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
 
 // GET
 const getSchedules = async () => {
@@ -94,11 +95,23 @@ const createNewSchedules = async (
     error.value = await res.json();
   } else console.log("error, cannot be added");
 };
-
 const currentDetail = ref({});
 const moreDetail = (curbookingId) => {
   currentDetail.value = curbookingId;
 };
+
+const clinic = ref();
+const getClinic = async (e) => {
+  if(e !== 0){
+    const res = await fetch(URLC + "/" + e);
+  if (res.status === 200) {
+    clinic.value = await res.json();
+    console.log(clinic.value);
+  } else console.log("error, cannot get data");
+}else {
+  clinic.value = undefined;
+}
+}
 </script>
 
 <template>
@@ -106,17 +119,49 @@ const moreDetail = (curbookingId) => {
     <table class="table-zebra table-layout table-element">
       <thead class="table-header bg-base-200">
         <tr>
-          <Navbar />
+          <Navbar @option="getClinic" />
           <th>
             <Create @create="createNewSchedules" :error="error" />
           </th>
         </tr>
       </thead>
-      <div v-if="schedules < 1" class="text-5xl pt-20" v-cloak>
+      <div v-if="schedules && clinic < 1" class="text-5xl pt-20" v-cloak>
         No Scheduled Events
       </div>
       <tbody v-else>
-        <tr v-for="contents in schedules" :key="contents.id">
+          <tr v-if="clinic == undefined" v-for="contents in schedules" :key="contents.id">
+          <td class="p-10 text-xl">
+            <div class="box-element break-words">
+              {{ contents.bookingName }}
+            </div>
+          </td>
+          <td class="p-10 text-xl">
+            <div class="pt-2">
+              {{ contents.categoryName }}
+            </div>
+          </td>
+
+          <td class="p-10 text-xl">
+            {{
+              moment(contents.eventStartTime).format("D MMMM YYYY, h:mm:ss A")
+            }}
+          </td>
+
+          <td class="p-10 text-xl">{{ contents.eventDuration }} minute</td>
+
+          <td>
+            <div id="showDetail">
+              <Detail
+                @moreDetail="moreDetail(contents)"
+                :detail="currentDetail"
+                @editDetail="modifySchedules"
+              />
+
+              <Delete @delete="removeSchedules(contents.id)" />
+            </div>
+          </td>
+        </tr>
+          <tr v-else v-for="contents in clinic">
           <td class="p-10 text-xl">
             <div class="box-element break-words">
               {{ contents.bookingName }}
