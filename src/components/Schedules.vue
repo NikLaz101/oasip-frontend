@@ -85,13 +85,12 @@ const createNewSchedules = async (
       categoryId: selectedId,
       eventStartTime: Time,
       eventDuration: Duration,
-      eventNotes: Notes,
+      eventNotes: (Notes.trim() == "" ? null : Notes.trim()),
     }),
   });
   if (res.status === 201) {
     getSchedules();
     error.value = {};
-    // console.log(JSON.stringify(error.value));
   } else if (res.status === 400) {
     error.value = await res.json();
     // console.log(error.value);

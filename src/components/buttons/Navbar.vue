@@ -38,7 +38,7 @@ onBeforeMount(async () => {
       <button tabindex="0" class="m-1 text-xl font-extrabold">DATE</button>
       <ul
         tabindex="0"
-        class="dropdown-content menu p-2 bg-base-300 shadow rounded-box w-64 mt-7"
+        class="dropdown-content menu p-2 bg-base-300 shadow rounded-box w-36 mt-7"
       >
       <li><button class="text-xl">Upcoming</button></li>
       <li><button class="text-xl">Past</button></li>
