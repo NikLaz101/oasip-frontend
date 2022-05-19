@@ -127,7 +127,7 @@ const getClinic = async (e) => {
           </th>
         </tr>
       </thead>
-      <div v-if="schedules && clinic < 1" class="text-5xl pt-20" v-cloak>
+      <div id="Noevent" v-if="schedules && clinic < 1" class="text-5xl pt-20" v-cloak>
         No Scheduled Events
       </div>
       <tbody v-else>
@@ -207,6 +207,14 @@ const getClinic = async (e) => {
 
 .textarea {
   @apply textarea-ghost focus:outline-none;
+}
+
+#Noevent {
+  text-align: center;
+  width: 100%;
+  position: absolute;
+  z-index: -1;
+
 }
 
 table {

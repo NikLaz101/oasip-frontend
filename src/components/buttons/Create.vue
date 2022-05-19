@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onBeforeMount } from "vue";
 defineEmits(["create"]);
- defineProps({
+defineProps({
   error: {
     type: Object,
     default: {},
@@ -41,6 +41,7 @@ const newDuration = () => {
   });
 };
 
+const field = "bg-base-100 italic";
 </script>
 
 <template>
@@ -72,7 +73,7 @@ const newDuration = () => {
               type="text"
               v-model="Name"
               maxlength="100"
-              class="bg-base-100 border-b-2 italic"
+              class="bg-base-100 italic"
               placeholder="Your name"
             />
             <p class="error">{{ error.bookingName }}</p>
@@ -138,7 +139,12 @@ const newDuration = () => {
           <button
             @click="
               $emit('create', Name, Email, selectedId, Time, Duration, Notes);
-            ( Name == undefined || Email == undefined || Selected == undefined || Time == undefined ? isModalOn : isModalOn = !isModalOn )
+              Name == undefined ||
+              Email == undefined ||
+              Selected == undefined ||
+              Time == undefined
+                ? isModalOn
+                : (isModalOn = !isModalOn);
             "
             class="btn"
           >
@@ -152,8 +158,20 @@ const newDuration = () => {
 
 <style>
 input,
-textarea {
-  color: rgb(255, 255, 255);
+textarea,
+select {
+  border-color: #494a7d;
+  border-radius: 5px;
+  padding: 10px;
+  border-width: 2px;
+  width: 100%;
+}
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none !important;
+  border: 2px solid #fcc302;
+  /* box-shadow: 0 0 10px #719ece; */
 }
 .modal-content {
   margin: auto;
