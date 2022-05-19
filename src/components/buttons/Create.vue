@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onBeforeMount } from "vue";
 defineEmits(["create"]);
-defineProps({
+ defineProps({
   error: {
     type: Object,
     default: {},
@@ -29,7 +29,7 @@ const Email = ref();
 const Selected = ref();
 const Time = ref();
 const Duration = ref();
-const Notes = ref();
+const Notes = ref("");
 const selectedId = ref();
 
 const newDuration = () => {
@@ -53,7 +53,7 @@ const newDuration = () => {
         Selected = undefined;
         Time = undefined;
         Duration = undefined;
-        Notes = undefined;
+        Notes = '';
         error = {};
         isModalOn = !isModalOn;
       "
