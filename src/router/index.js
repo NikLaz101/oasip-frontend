@@ -4,6 +4,7 @@ import {
 } from "vue-router";
 import Homepage from "../views/Homepage.vue";
 import Contents from "../views/Contents.vue";
+import CategoryContent from "../views/CategoryContent.vue"
 
 const history = createWebHistory();
 const routes = [{
@@ -11,10 +12,16 @@ const routes = [{
     name: "homepage",
     component: Homepage,
     children: [{
-        path: "",
-        name: "contents",
-        component: Contents,
-    }, ],
+            path: "",
+            name: "contents",
+            component: Contents,
+        },
+        {
+            path: "category",
+            name: "categoryContents",
+            component: CategoryContent,
+        },
+    ],
 }, ];
 
 const router = createRouter({

@@ -1,19 +1,19 @@
 <script setup>
 import { ref, onBeforeMount } from "vue";
 import moment from "moment";
-import Detail from "./buttons/Detail.vue";
-import Create from "./buttons/Create.vue";
-import Delete from "./buttons/Delete.vue";
-import Navbar from "./buttons/Navbar.vue";
+import Detail from "./buttons/scheduleBtn/Detail.vue";
+import Create from "./buttons/scheduleBtn/Create.vue";
+import Delete from "./buttons/scheduleBtn/Delete.vue";
+import Navbar from "./buttons/scheduleBtn/Navbar.vue";
 
 const error = ref({});
 const schedules = ref([]);
-const URL = "http://intproj21.sit.kmutt.ac.th/at1/api/event";
-const URLC = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
+const URL_EVENT = "http://intproj21.sit.kmutt.ac.th/at1/api/event";
+const URL_CATEGORY = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
 
 // GET
 const getSchedules = async () => {
-  const res = await fetch(URL);
+  const res = await fetch(URL_EVENT);
   if (res.status === 200) {
     schedules.value = await res.json();
   } else console.log("error, cannot get data");
@@ -25,7 +25,7 @@ onBeforeMount(async () => {
 //DELETE
 const removeSchedules = async (removeContentID) => {
   if (confirm("Do you really want to delete")) {
-    const res = await fetch(URL + "/" + removeContentID, {
+    const res = await fetch(URL_EVENT + "/" + removeContentID, {
       method: "DELETE",
     });
     if (res.status === 200) {
@@ -39,7 +39,7 @@ const removeSchedules = async (removeContentID) => {
 
 // EDIT
 const modifySchedules = async (newid, newtime, newnotes) => {
-  const res = await fetch(URL + "/" + newid, {
+  const res = await fetch(URL_EVENT + "/" + newid, {
     method: "PUT",
     headers: {
       "content-type": "application/json",
@@ -74,7 +74,7 @@ const createNewSchedules = async (
   Duration,
   Notes
 ) => {
-  const res = await fetch(URL, {
+  const res = await fetch(URL_EVENT, {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -103,7 +103,7 @@ const moreDetail = (curbookingId) => {
 const clinic = ref();
 const getClinic = async (e) => {
   if(e !== 0){
-    const res = await fetch(URLC + "/" + e);
+    const res = await fetch(URL_CATEGORY + "/" + e);
   if (res.status === 200) {
     clinic.value = await res.json();
     console.log(clinic.value);
