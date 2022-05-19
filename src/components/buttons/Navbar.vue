@@ -2,10 +2,11 @@
 import { ref, onBeforeMount } from "vue";
 defineEmits(["option"]);
 const category = ref([]);
+const URL = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
 
 // GET
 const getCategories = async () => {
-  const res = await fetch(import.meta.env.BASE_URL + "api/category");
+  const res = await fetch(URL);
   if (res.status === 200) {
     category.value = await res.json();
   } else console.log("error, cannot get data");
