@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onBeforeMount } from "vue";
 defineEmits(["create"]);
-const props = defineProps({
+defineProps({
   error: {
     type: Object,
     default: {},
