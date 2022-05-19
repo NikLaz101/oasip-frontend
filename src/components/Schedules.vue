@@ -8,12 +8,10 @@ import Navbar from "./buttons/Navbar.vue";
 
 const error = ref({});
 const schedules = ref([]);
-const URL = "http://intproj21.sit.kmutt.ac.th/at1/api/event";
-const URLC = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
 
 // GET
 const getSchedules = async () => {
-  const res = await fetch(URL);
+  const res = await fetch(import.meta.env.BASE_URL + "api/event");
   if (res.status === 200) {
     schedules.value = await res.json();
   } else console.log("error, cannot get data");
@@ -25,7 +23,7 @@ onBeforeMount(async () => {
 //DELETE
 const removeSchedules = async (removeContentID) => {
   if (confirm("Do you really want to delete")) {
-    const res = await fetch(URL + "/" + removeContentID, {
+    const res = await fetch(import.meta.env.BASE_URL + "api/event/" + removeContentID, {
       method: "DELETE",
     });
     if (res.status === 200) {
@@ -39,7 +37,7 @@ const removeSchedules = async (removeContentID) => {
 
 // EDIT
 const modifySchedules = async (newid, newtime, newnotes) => {
-  const res = await fetch(URL + "/" + newid, {
+  const res = await fetch(import.meta.env.BASE_URL + "api/event/" + newid, {
     method: "PUT",
     headers: {
       "content-type": "application/json",
@@ -74,7 +72,7 @@ const createNewSchedules = async (
   Duration,
   Notes
 ) => {
-  const res = await fetch(URL, {
+  const res = await fetch(import.meta.env.BASE_URL + "api/event", {
     method: "POST",
     headers: {
       "content-type": "application/json",
