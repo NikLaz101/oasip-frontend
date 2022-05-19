@@ -91,6 +91,7 @@ const newDuration = () => {
           </div>
           <label for="clinics">Clinic</label>
           <div class="py-3">
+            
             <select
               name="clinics"
               class="bg-base-100 border-b-2 italic"
