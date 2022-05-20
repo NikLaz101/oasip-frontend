@@ -22,9 +22,12 @@ onBeforeMount(async () => {
 //DELETE
 const removeSchedules = async (removeContentID) => {
   if (confirm("Do you really want to delete")) {
-    const res = await fetch(import.meta.env.VITE_BASE_URL + "api/event/" + removeContentID, {
-      method: "DELETE",
-    });
+    const res = await fetch(
+      import.meta.env.VITE_BASE_URL + "api/event/" + removeContentID,
+      {
+        method: "DELETE",
+      }
+    );
     if (res.status === 200) {
       schedules.value = schedules.value.filter(
         (schedules) => schedules.id !== removeContentID
@@ -36,16 +39,19 @@ const removeSchedules = async (removeContentID) => {
 
 // EDIT
 const modifySchedules = async (newid, newtime, newnotes) => {
-  const res = await fetch(import.meta.env.VITE_BASE_URL + "api/event/" + newid, {
-    method: "PUT",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      eventStartTime: newtime,
-      eventNotes: newnotes,
-    }),
-  });
+  const res = await fetch(
+    import.meta.env.VITE_BASE_URL + "api/event/" + newid,
+    {
+      method: "PUT",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        eventStartTime: newtime+ "+07:00",
+        eventNotes: newnotes,
+      }),
+    }
+  );
   if (res.status === 200) {
     getSchedules();
     const modify = await res.json();
@@ -80,9 +86,9 @@ const createNewSchedules = async (
       bookingName: Name,
       bookingEmail: Email,
       categoryId: selectedId,
-      eventStartTime: Time + '+07:00',
+      eventStartTime: Time + "+07:00",
       eventDuration: Duration,
-      eventNotes: (Notes.trim() == "" ? null : Notes.trim()),
+      eventNotes: Notes.trim() == "" ? null : Notes.trim(),
     }),
   });
   if (res.status === 201) {
@@ -92,20 +98,25 @@ const createNewSchedules = async (
 const currentDetail = ref({});
 const moreDetail = (curbookingId) => {
   currentDetail.value = curbookingId;
+  currentDetail.value.eventStartTime = moment(
+    currentDetail.value.eventStartTime
+  ).format("YYYY-MM-DDTHH:mm:ss");
 };
 
 const clinic = ref();
 const getClinic = async (e) => {
-  if(e !== 0){
-    const res = await fetch(import.meta.env.VITE_BASE_URL + "api/category/" + e);
-  if (res.status === 200) {
-    clinic.value = await res.json();
-    console.log(clinic.value);
-  } else console.log("error, cannot get data");
-}else {
-  clinic.value = undefined;
-}
-}
+  if (e !== 0) {
+    const res = await fetch(
+      import.meta.env.VITE_BASE_URL + "api/category/" + e
+    );
+    if (res.status === 200) {
+      clinic.value = await res.json();
+      console.log(clinic.value);
+    } else console.log("error, cannot get data");
+  } else {
+    clinic.value = undefined;
+  }
+};
 </script>
 
 <template>
@@ -119,11 +130,20 @@ const getClinic = async (e) => {
           </th>
         </tr>
       </thead>
-      <div id="Noevent" v-if="schedules && clinic < 1" class="text-5xl pt-20" v-cloak>
+      <div
+        id="Noevent"
+        v-if="schedules && clinic < 1"
+        class="text-5xl pt-20"
+        v-cloak
+      >
         No Scheduled Events
       </div>
       <tbody v-else>
-          <tr v-if="clinic == undefined" v-for="contents in schedules" :key="contents.id">
+        <tr
+          v-if="clinic == undefined"
+          v-for="contents in schedules"
+          :key="contents.id"
+        >
           <td class="p-10 text-xl">
             <div class="box-element break-words">
               {{ contents.bookingName }}
@@ -155,7 +175,7 @@ const getClinic = async (e) => {
             </div>
           </td>
         </tr>
-          <tr v-else v-for="contents in clinic">
+        <tr v-else v-for="contents in clinic">
           <td class="p-10 text-xl">
             <div class="box-element break-words">
               {{ contents.bookingName }}
@@ -206,7 +226,6 @@ const getClinic = async (e) => {
   width: 100%;
   position: absolute;
   z-index: -1;
-
 }
 
 table {
