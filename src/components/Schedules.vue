@@ -6,7 +6,6 @@ import Create from "./buttons/scheduleBtn/Create.vue";
 import Delete from "./buttons/scheduleBtn/Delete.vue";
 import Navbar from "./buttons/scheduleBtn/Navbar.vue";
 
-const error = ref({});
 const schedules = ref([]);
 const URL_EVENT = "http://intproj21.sit.kmutt.ac.th/at1/api/event"
 const URL_CATEGORY = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
@@ -90,7 +89,6 @@ const createNewSchedules = async (
   });
   if (res.status === 201) {
     getSchedules();
-    error.value = {};
     // } else if (res.status === 400) {
     //   error.value = await res.json();
     // console.log(error.value);
@@ -123,7 +121,7 @@ const getClinic = async (e) => {
         <tr>
           <Navbar @option="getClinic" />
           <th>
-            <Create @create="createNewSchedules" :error="error" />
+            <Create @create="createNewSchedules"/>
           </th>
         </tr>
       </thead>
