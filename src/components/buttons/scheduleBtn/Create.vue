@@ -81,11 +81,13 @@ const newDuration = () => {
           <label for="Email">Email</label>
           <div class="py-3">
             <input
-              type="text"
+              type="email"
               v-model="Email"
               maxlength="50"
               class="bg-base-100 border-b-2 italic"
               placeholder="Your email"
+              pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,63}$"
+              required
             />
             <p class="error">{{ error.bookingEmail }}</p>
           </div>
@@ -109,7 +111,7 @@ const newDuration = () => {
           </div>
           <label for="Date">Date</label>
           <div class="py-3">
-            <input type="datetime-local" v-model="Time" class="text-black" />
+            <input type="datetime-local" v-model="Time" class="text-black"/>
             <p class="error">{{ error.eventStartTime }}</p>
           </div>
           <label for="Duration">Duration (minutes)</label>
