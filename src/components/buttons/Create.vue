@@ -1,12 +1,7 @@
 <script setup>
 import { ref, onBeforeMount } from "vue";
+import moment from "moment";
 defineEmits(["create"]);
-defineProps({
-  error: {
-    type: Object,
-    default: {},
-  },
-});
 
 const isModalOn = ref(false);
 const category = ref([]);
@@ -40,7 +35,14 @@ const newDuration = () => {
   });
 };
 
-const field = "bg-base-100 italic";
+const date = ref();
+function updateTime() {
+  date.value = moment().format("YYYY-MM-DDTHH:mm:ss");
+}
+var realTime = () => {
+  setInterval(updateTime, 1000);
+};
+realTime();
 </script>
 
 <template>
@@ -65,112 +67,125 @@ const field = "bg-base-100 italic";
         <div class="flex justify-end">
           <button class="close" @click="isModalOn = !isModalOn">x</button>
         </div>
-        <div class="grid justify-center">
-          <label for="name">Name</label>
-          <div class="py-3">
-            <input
-              type="text"
-              v-model="Name"
-              maxlength="100"
-              class="bg-base-100 italic"
-              placeholder="Your name"
-            />
-            <p class="error">{{ error.bookingName }}</p>
-          </div>
-
-          <label for="Email">Email</label>
-          <div class="py-3">
-            <input
-              type="text"
-              v-model="Email"
-              maxlength="50"
-              class="bg-base-100 border-b-2 italic"
-              placeholder="Your email"
-            />
-            <p class="error">{{ error.bookingEmail }}</p>
-          </div>
-          <label for="clinics">Clinic</label>
-          <div class="py-3">
-            <select
-              name="clinics"
-              class="bg-base-100 border-b-2 italic"
-              @change="newDuration"
-              v-model="Selected"
-            >
-              <option
-                v-for="categorys in category"
-                :value="categorys.eventCategoryName"
+        <!-- form -->
+        <form
+          method="post"
+          @submit.prevent="
+            $emit('create', Name, Email, selectedId, Time, Duration, Notes);
+            Name == undefined ||
+            Email == undefined ||
+            Selected == undefined ||
+            Time == undefined
+              ? isModalOn
+              : (isModalOn = !isModalOn);
+          "
+        >
+        <!-- Name -->
+          <div class="grid justify-center">
+            <label for="name">Name</label>
+            <div class="py-3">
+              <input
+                id="message"
+                type="text"
+                v-model="Name"
+                maxlength="100"
+                class="bg-base-100 italic"
+                placeholder="Your name"
+                required
+              />
+            </div>
+              <!-- Email -->
+            <label for="Email">Email</label>
+            <div class="py-3">
+              <input
+                id="message"
+                type="email"
+                v-model="Email"
+                maxlength="50"
+                class="bg-base-100 border-b-2 italic"
+                placeholder="Your email"
+                required
+              />
+            </div>
+            <!-- Clinic -->
+            <label for="clinics">Clinic</label>
+            <div class="py-3">
+              <select
+                id="message"
+                name="clinics"
+                class="bg-base-100 border-b-2 italic"
+                @change="newDuration"
+                v-model="Selected"
+                required
               >
-                {{ categorys.eventCategoryName }}
-              </option>
-            </select>
-            <p class="error">{{ error.categoryId }}</p>
+                <option
+                  v-for="categorys in category"
+                  :value="categorys.eventCategoryName"
+                >
+                  {{ categorys.eventCategoryName }}
+                </option>
+              </select>
+            </div>
+            <!-- Date -->
+            <label for="Date">Date</label>
+            <div class="py-3">
+              <input
+                id="message"
+                type="datetime-local"
+                v-model="Time"
+                :min="date"
+                step="any"
+                class="text-black"
+                required
+              />
+            </div>
+            <!-- Duration -->
+            <label for="Duration">Duration (minutes)</label>
+            <div class="py-3">
+              <input
+                id="message"
+                class="bg-base-100 border-b-2 italic focus:outline-none pointer-events-none"
+                readonly
+                type="text"
+                v-model="Duration"
+                placeholder="Select your clinic"
+              />
+            </div>
+            <!-- Note -->
+            <label for="Note">Note</label>
+            <div class="py-3">
+              <textarea
+                id="message"
+                cols="50"
+                rows="2"
+                v-model="Notes"
+                maxlength="500"
+                class="bg-base-100 border-b-2 italic p-2"
+                placeholder="Your message"
+              ></textarea>
+            </div>
           </div>
-          <label for="Date">Date</label>
-          <div class="py-3">
-            <input type="datetime-local" v-model="Time" class="text-black" />
-            <p class="error">{{ error.eventStartTime }}</p>
+          <div class="flex justify-end pt-2">
+            <!-- button -->
+            <input class="btn" type="submit" value="Create" />
           </div>
-          <label for="Duration">Duration (minutes)</label>
-          <div class="py-3">
-            <input
-              class="bg-base-100 border-b-2 italic focus:outline-none pointer-events-none"
-              readonly
-              type="text"
-              v-model="Duration"
-              placeholder="Select your clinic"
-            />
-          </div>
-          <label for="Note">Note</label>
-          <div class="py-3">
-            <textarea
-              cols="50"
-              rows="2"
-              v-model="Notes"
-              maxlength="500"
-              class="bg-base-100 border-b-2 italic p-2"
-              placeholder="Your message"
-            ></textarea>
-            <p class="error">{{ error.eventNotes }}</p>
-          </div>
-        </div>
-        <div class="flex justify-end pt-2">
-          <button
-            @click="
-              $emit('create', Name, Email, selectedId, Time, Duration, Notes);
-              Name == undefined ||
-              Email == undefined ||
-              Selected == undefined ||
-              Time == undefined
-                ? isModalOn
-                : (isModalOn = !isModalOn);
-            "
-            class="btn"
-          >
-            Create
-          </button>
-        </div>
+        </form>
       </div>
     </div>
   </div>
 </template>
 
 <style>
-input,
-textarea,
-select {
+#message {
   border-color: #494a7d;
   border-radius: 5px;
   padding: 10px;
   border-width: 2px;
   width: 100%;
 }
-input:focus,
-textarea:focus,
-select:focus {
+#message:focus {
   outline: none !important;
   border: 2px solid #fcc302;
-  /* box-shadow: 0 0 10px #719ece; */
 }
 .modal-content {
   margin: auto;
@@ -193,7 +208,6 @@ select:focus {
   font-size: 28px;
   font-weight: bold;
 }
-
 .close:hover,
 .close:focus {
   color: rgb(82, 80, 80);

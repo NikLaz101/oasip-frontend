@@ -6,7 +6,6 @@ import Create from "./buttons/Create.vue";
 import Delete from "./buttons/Delete.vue";
 import Navbar from "./buttons/Navbar.vue";
 
-const error = ref({});
 const schedules = ref([]);
 
 // GET
@@ -47,7 +46,7 @@ const modifySchedules = async (newid, newtime, newnotes) => {
       eventNotes: newnotes,
     }),
   });
-  if (res.status === 201) {
+  if (res.status === 200) {
     getSchedules();
     const modify = await res.json();
     schedules.value = schedules.value.map((schedules) =>
@@ -81,18 +80,13 @@ const createNewSchedules = async (
       bookingName: Name,
       bookingEmail: Email,
       categoryId: selectedId,
-      eventStartTime: Time,
+      eventStartTime: Time + '+07:00',
       eventDuration: Duration,
       eventNotes: (Notes.trim() == "" ? null : Notes.trim()),
     }),
   });
   if (res.status === 201) {
     getSchedules();
-    error.value = {};
-  } else if (res.status === 400) {
-    error.value = await res.json();
-    // console.log(error.value);
-    // console.log(JSON.stringify(error.value).length);
   } else console.log("error, cannot be added");
 };
 const currentDetail = ref({});
@@ -121,7 +115,7 @@ const getClinic = async (e) => {
         <tr>
           <Navbar @option="getClinic" />
           <th>
-            <Create @create="createNewSchedules" :error="error" />
+            <Create @create="createNewSchedules" />
           </th>
         </tr>
       </thead>
