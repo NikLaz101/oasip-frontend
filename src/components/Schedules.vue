@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onBeforeMount, computed, onMounted } from "vue";
+import { ref, onBeforeMount } from "vue";
 import moment from "moment";
 import Detail from "./buttons/Detail.vue";
 import Create from "./buttons/Create.vue";
@@ -45,11 +45,11 @@ const modifySchedules = async (newid, newtime, newnotes) => {
       "content-type": "application/json",
     },
     body: JSON.stringify({
-      eventStartTime: newtime,
+      eventStartTime: newtime + '+07:00',
       eventNotes: newnotes,
     }),
   });
-  if (res.status === 201) {
+  if (res.status === 200) {
     getSchedules();
     const modify = await res.json();
     schedules.value = schedules.value.map((schedules) =>
@@ -100,6 +100,7 @@ const createNewSchedules = async (
 const currentDetail = ref({});
 const moreDetail = (curbookingId) => {
   currentDetail.value = curbookingId;
+  currentDetail.value.eventStartTime = moment(currentDetail.value.eventStartTime).format("YYYY-MM-DDTHH:mm:ss");
 };
 
 const clinic = ref();

@@ -98,7 +98,6 @@ realTime();
                 placeholder="Your name"
                 required
               />
-              <p class="error">{{ error.bookingName }}</p>
             </div>
 
             <label for="Email">Email</label>
@@ -112,7 +111,6 @@ realTime();
                 placeholder="Your email"
                 required
               />
-              <p class="error">{{ error.bookingEmail }}</p>
             </div>
             <label for="clinics">Clinic</label>
             <div class="py-3">
@@ -125,13 +123,12 @@ realTime();
                 required
               >
                 <option
-                  v-for="categorys in category"
-                  :value="categorys.eventCategoryName"
+                  v-for="categories in category"
+                  :value="categories.eventCategoryName"
                 >
-                  {{ categorys.eventCategoryName }}
+                  {{ categories.eventCategoryName }}
                 </option>
               </select>
-              <p class="error">{{ error.categoryId }}</p>
             </div>
             <label for="Date">Date</label>
             <div class="py-3">
@@ -144,7 +141,6 @@ realTime();
                 class="text-black"
                 required
               />
-              <p class="error">{{ error.eventStartTime }}</p>
             </div>
             <label for="Duration">Duration (minutes)</label>
             <div class="py-3">
@@ -168,7 +164,6 @@ realTime();
                 class="bg-base-100 border-b-2 italic p-2"
                 placeholder="Your message"
               ></textarea>
-              <p class="error">{{ error.eventNotes }}</p>
             </div>
           </div>
           <div class="flex justify-end pt-2">
