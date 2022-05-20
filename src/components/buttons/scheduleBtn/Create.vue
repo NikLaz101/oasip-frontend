@@ -1,5 +1,6 @@
 <script setup>
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, computed } from "vue";
+import moment from "moment";
 defineEmits(["create"]);
 defineProps({
   error: {
@@ -29,7 +30,7 @@ const Email = ref();
 const Selected = ref();
 const Time = ref();
 const Duration = ref();
-const Notes = ref();
+const Notes = ref("");
 const selectedId = ref();
 
 const newDuration = () => {
@@ -41,6 +42,14 @@ const newDuration = () => {
   });
 };
 
+const date = ref();
+function updateTime() {
+  date.value = moment().format("YYYY-MM-DDTHH:mm:ss");
+}
+var realTime = () => {
+  setInterval(updateTime, 1000);
+};
+realTime();
 </script>
 
 <template>
@@ -53,7 +62,7 @@ const newDuration = () => {
         Selected = undefined;
         Time = undefined;
         Duration = undefined;
-        Notes = undefined;
+        Notes = '';
         error = {};
         isModalOn = !isModalOn;
       "
@@ -65,99 +74,126 @@ const newDuration = () => {
         <div class="flex justify-end">
           <button class="close" @click="isModalOn = !isModalOn">x</button>
         </div>
-        <div class="grid justify-center">
-          <label for="name">Name</label>
-          <div class="py-3">
-            <input
-              type="text"
-              v-model="Name"
-              maxlength="100"
-              class="bg-base-100 border-b-2 italic"
-              placeholder="Your name"
-            />
-            <p class="error">{{ error.bookingName }}</p>
-          </div>
+        <form
+          method="post"
+          @submit.prevent="
+            $emit('create', Name, Email, selectedId, Time, Duration, Notes);
+            Name == undefined ||
+            Email == undefined ||
+            Selected == undefined ||
+            Time == undefined
+              ? isModalOn
+              : (isModalOn = !isModalOn);
+          "
+        >
+          <div class="grid justify-center">
+            <label for="name">Name</label>
+            <div class="py-3">
+              <input
+                id="message"
+                type="text"
+                v-model="Name"
+                maxlength="100"
+                class="bg-base-100 italic"
+                placeholder="Your name"
+                required
+              />
+              <p class="error">{{ error.bookingName }}</p>
+            </div>
 
-          <label for="Email">Email</label>
-          <div class="py-3">
-            <input
-              type="email"
-              v-model="Email"
-              maxlength="50"
-              class="bg-base-100 border-b-2 italic"
-              placeholder="Your email"
-              pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,63}$"
-              required
-            />
-            <p class="error">{{ error.bookingEmail }}</p>
-          </div>
-          <label for="clinics">Clinic</label>
-          <div class="py-3">
-            
-            <select
-              name="clinics"
-              class="bg-base-100 border-b-2 italic"
-              @change="newDuration"
-              v-model="Selected"
-            >
-              <option
-                v-for="categorys in category"
-                :value="categorys.eventCategoryName"
+            <label for="Email">Email</label>
+            <div class="py-3">
+              <input
+                id="message"
+                type="email"
+                v-model="Email"
+                maxlength="50"
+                class="bg-base-100 border-b-2 italic"
+                placeholder="Your email"
+                required
+              />
+              <p class="error">{{ error.bookingEmail }}</p>
+            </div>
+            <label for="clinics">Clinic</label>
+            <div class="py-3">
+              <select
+                id="message"
+                name="clinics"
+                class="bg-base-100 border-b-2 italic"
+                @change="newDuration"
+                v-model="Selected"
+                required
               >
-                {{ categorys.eventCategoryName }}
-              </option>
-            </select>
-            <p class="error">{{ error.categoryId }}</p>
+                <option
+                  v-for="categorys in category"
+                  :value="categorys.eventCategoryName"
+                >
+                  {{ categorys.eventCategoryName }}
+                </option>
+              </select>
+              <p class="error">{{ error.categoryId }}</p>
+            </div>
+            <label for="Date">Date</label>
+            <div class="py-3">
+              <input
+                id="message"
+                type="datetime-local"
+                v-model="Time"
+                :min="date"
+                step="any"
+                class="text-black"
+                required
+              />
+              <p class="error">{{ error.eventStartTime }}</p>
+            </div>
+            <label for="Duration">Duration (minutes)</label>
+            <div class="py-3">
+              <input
+                id="message"
+                class="bg-base-100 border-b-2 italic focus:outline-none pointer-events-none"
+                readonly
+                type="text"
+                v-model="Duration"
+                placeholder="Select your clinic"
+              />
+            </div>
+            <label for="Note">Note</label>
+            <div class="py-3">
+              <textarea
+                id="message"
+                cols="50"
+                rows="2"
+                v-model="Notes"
+                maxlength="500"
+                class="bg-base-100 border-b-2 italic p-2"
+                placeholder="Your message"
+              ></textarea>
+              <p class="error">{{ error.eventNotes }}</p>
+            </div>
           </div>
-          <label for="Date">Date</label>
-          <div class="py-3">
-            <input type="datetime-local" v-model="Time" class="text-black"/>
-            <p class="error">{{ error.eventStartTime }}</p>
+          <div class="flex justify-end pt-2">
+            <!-- <button class="btn">Create</button> -->
+            <input class="btn" type="submit" value="Create" />
           </div>
-          <label for="Duration">Duration (minutes)</label>
-          <div class="py-3">
-            <input
-              class="bg-base-100 border-b-2 italic focus:outline-none pointer-events-none"
-              readonly
-              type="text"
-              v-model="Duration"
-              placeholder="Select your clinic"
-            />
-          </div>
-          <label for="Note">Note</label>
-          <div class="py-3">
-            <textarea
-              cols="50"
-              rows="2"
-              v-model="Notes"
-              maxlength="500"
-              class="bg-base-100 border-b-2 italic p-2"
-              placeholder="Your message"
-            ></textarea>
-            <p class="error">{{ error.eventNotes }}</p>
-          </div>
-        </div>
-        <div class="flex justify-end pt-2">
-          <button
-            @click="
-              $emit('create', Name, Email, selectedId, Time, Duration, Notes);
-            ( Name == undefined || Email == undefined || Selected == undefined || Time == undefined ? isModalOn : isModalOn = !isModalOn )
-            "
-            class="btn"
-          >
-            Create
-          </button>
-        </div>
+        </form>
       </div>
     </div>
   </div>
 </template>
 
 <style>
-input,
-textarea {
-  color: rgb(255, 255, 255);
+#message {
+  border-color: #494a7d;
+  border-radius: 5px;
+  padding: 10px;
+  border-width: 2px;
+  width: 100%;
 }
+#message:focus {
+  outline: none !important;
+  border: 2px solid #fcc302;
+}
+
 .modal-content {
   margin: auto;
   padding: 20px;

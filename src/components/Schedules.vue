@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, computed, onMounted } from "vue";
 import moment from "moment";
 import Detail from "./buttons/scheduleBtn/Detail.vue";
 import Create from "./buttons/scheduleBtn/Create.vue";
@@ -83,16 +83,18 @@ const createNewSchedules = async (
       bookingName: Name,
       bookingEmail: Email,
       categoryId: selectedId,
-      eventStartTime: Time,
+      eventStartTime: Time + "+07:00",
       eventDuration: Duration,
-      eventNotes: Notes,
+      eventNotes: Notes.trim() == "" ? null : Notes.trim(),
     }),
   });
   if (res.status === 201) {
     getSchedules();
     error.value = {};
-  } else if (res.status === 400) {
-    error.value = await res.json();
+    // } else if (res.status === 400) {
+    //   error.value = await res.json();
+    // console.log(error.value);
+    // console.log(JSON.stringify(error.value).length);
   } else console.log("error, cannot be added");
 };
 const currentDetail = ref({});
@@ -125,11 +127,20 @@ const getClinic = async (e) => {
           </th>
         </tr>
       </thead>
-      <div v-if="schedules && clinic < 1" class="text-5xl pt-20" v-cloak>
+      <div
+        id="Noevent"
+        v-if="schedules && clinic < 1"
+        class="text-5xl pt-20"
+        v-cloak
+      >
         No Scheduled Events
       </div>
       <tbody v-else>
-          <tr v-if="clinic == undefined" v-for="contents in schedules" :key="contents.id">
+        <tr
+          v-if="clinic == undefined"
+          v-for="contents in schedules"
+          :key="contents.id"
+        >
           <td class="p-10 text-xl">
             <div class="box-element break-words">
               {{ contents.bookingName }}
@@ -161,7 +172,7 @@ const getClinic = async (e) => {
             </div>
           </td>
         </tr>
-          <tr v-else v-for="contents in clinic">
+        <tr v-else v-for="contents in clinic">
           <td class="p-10 text-xl">
             <div class="box-element break-words">
               {{ contents.bookingName }}
@@ -205,6 +216,13 @@ const getClinic = async (e) => {
 
 .textarea {
   @apply textarea-ghost focus:outline-none;
+}
+
+#Noevent {
+  text-align: center;
+  width: 100%;
+  position: absolute;
+  z-index: -1;
 }
 
 table {
