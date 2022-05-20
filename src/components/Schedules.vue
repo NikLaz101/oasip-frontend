@@ -42,7 +42,7 @@ const modifySchedules = async (newid, newtime, newnotes) => {
       "content-type": "application/json",
     },
     body: JSON.stringify({
-      eventStartTime: newtime,
+      eventStartTime: newtime + '+07:00',,
       eventNotes: newnotes,
     }),
   });
