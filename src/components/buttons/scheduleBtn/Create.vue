@@ -31,7 +31,6 @@ const countName = computed(() => {
     return Name.value.length;
 });
 
-const t = Name.length
 
 const newDuration = () => {
     category.value.forEach((category) => {
@@ -98,7 +97,7 @@ realTime();
                     <div class="grid justify-center">
                         <label for="name"
                             >Name<span class="auto-fill"
-                                >( {{  }} /100)</span
+                                >( /100)</span
                             ></label
                         >
                         <div class="py-3">
