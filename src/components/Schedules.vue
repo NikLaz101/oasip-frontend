@@ -19,6 +19,7 @@ const getSchedules = async () => {
 onBeforeMount(async () => {
   await getSchedules();
 });
+
 //DELETE
 const removeSchedules = async (removeContentID) => {
   if (confirm("Do you really want to delete")) {
@@ -93,7 +94,7 @@ const moreDetail = (curbookingId) => {
   ).format("YYYY-MM-DDTHH:mm:ss");
   if (currentDetail.value.eventNotes === "") {
     currentDetail.value.eventNotes = null;
-  } else currentDetail.value.eventNotes = curbookingId.eventNotes;
+  }
 };
 
 const clinic = ref();
