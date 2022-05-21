@@ -1,10 +1,12 @@
 <script setup>
 import { ref, onBeforeMount } from "vue";
-defineEmits(["option"]);
+defineEmits(["option","upcoming","past"]);
 const category = ref([]);
+const URL = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
+
 // GET
 const getCategories = async () => {
-  const res = await fetch(import.meta.env.VITE_BASE_URL + "api/category");
+  const res = await fetch(URL);
   if (res.status === 200) {
     category.value = await res.json();
   } else console.log("error, cannot get data");
@@ -38,8 +40,8 @@ onBeforeMount(async () => {
         tabindex="0"
         class="dropdown-content menu p-2 bg-base-300 shadow rounded-box w-36 mt-7"
       >
-      <li><button class="text-xl">Upcoming</button></li>
-      <li><button class="text-xl">Past</button></li>
+      <li><button @click="$emit('upcoming')" class="text-xl">Upcoming</button></li>
+      <li><button @click="$emit('past')" class="text-xl">Past</button></li>
       </ul>
     </div>
   </th>  <th class="text-xl font-extrabold px-10">DURATION</th>

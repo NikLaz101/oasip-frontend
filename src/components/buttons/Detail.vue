@@ -119,7 +119,7 @@ realTime();
               </p>
               <div
                 v-show="!edit"
-                v-if="detail.eventNotes != null"
+                v-if="detail.eventNotes != null && detail.eventNotes.trim() != ''"
                 class="text-base font-medium py-2"
               >
                 {{ detail.eventNotes }}
@@ -142,9 +142,7 @@ realTime();
             </div>
             <div class="flex justify-end">
               <input class="btn m-2" v-show="edit" type="submit" value="OK" />
-              <button class="btn m-2" v-show="edit" @click="edit = !edit">
-                Cancel
-              </button>
+              <input class="btn m-2" v-show="edit" type="button" value="Cancel" @click="edit = !edit" />
             </div>
           </form>
         </div>

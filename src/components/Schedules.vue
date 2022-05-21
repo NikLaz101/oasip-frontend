@@ -47,23 +47,13 @@ const modifySchedules = async (newid, newtime, newnotes) => {
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        eventStartTime: newtime+ "+07:00",
-        eventNotes: newnotes,
+      eventStartTime: newtime + "+07:00",
+      eventNotes: newnotes.trim() == "" ? null : newnotes.trim(),
       }),
     }
   );
   if (res.status === 200) {
     getSchedules();
-    const modify = await res.json();
-    schedules.value = schedules.value.map((schedules) =>
-      schedules.id === modify.id
-        ? {
-            ...schedules,
-            eventStartTime: newtime,
-            eventNotes: newnotes,
-          }
-        : schedules
-    );
     console.log("edited successfully");
   } else console.log("error, cannot edit");
 };
@@ -101,11 +91,15 @@ const moreDetail = (curbookingId) => {
   currentDetail.value.eventStartTime = moment(
     currentDetail.value.eventStartTime
   ).format("YYYY-MM-DDTHH:mm:ss");
+  if (currentDetail.value.eventNotes === "") {
+    currentDetail.value.eventNotes = null;
+  } else currentDetail.value.eventNotes = curbookingId.eventNotes;
 };
 
 const clinic = ref();
 const getClinic = async (e) => {
   if (e !== 0) {
+    menu.value = undefined;
     const res = await fetch(
       import.meta.env.VITE_BASE_URL + "api/category/" + e
     );
@@ -115,7 +109,25 @@ const getClinic = async (e) => {
     } else console.log("error, cannot get data");
   } else {
     clinic.value = undefined;
+    menu.value = undefined;
   }
+};
+
+const menu = ref();
+const getUpcoming = async () => {
+  const res = await fetch(URL + "/" + "upcoming");
+  if (res.status === 200) {
+    menu.value = await res.json();
+    console.log(menu.value);
+  } else console.log("error, cannot get data");
+};
+
+const getPast = async () => {
+  const res = await fetch(URL + "/" + "past");
+  if (res.status === 200) {
+    menu.value = await res.json();
+    console.log(menu.value);
+  } else console.log("error, cannot get data");
 };
 </script>
 
@@ -124,7 +136,7 @@ const getClinic = async (e) => {
     <table class="table-zebra table-layout table-element">
       <thead class="table-header bg-base-200">
         <tr>
-          <Navbar @option="getClinic" />
+          <Navbar @option="getClinic" @upcoming="getUpcoming" @past="getPast" />
           <th>
             <Create @create="createNewSchedules" />
           </th>
@@ -132,7 +144,7 @@ const getClinic = async (e) => {
       </thead>
       <div
         id="Noevent"
-        v-if="schedules && clinic < 1"
+        v-if="schedules && clinic < 1 || menu < 1"
         class="text-5xl pt-20"
         v-cloak
       >
@@ -140,7 +152,7 @@ const getClinic = async (e) => {
       </div>
       <tbody v-else>
         <tr
-          v-if="clinic == undefined"
+          v-if="clinic == undefined && menu == undefined" 
           v-for="contents in schedules"
           :key="contents.id"
         >
@@ -175,7 +187,39 @@ const getClinic = async (e) => {
             </div>
           </td>
         </tr>
-        <tr v-else v-for="contents in clinic">
+        <tr v-else-if="menu == undefined" v-for="contents in clinic">
+          <td class="p-10 text-xl">
+            <div class="box-element break-words">
+              {{ contents.bookingName }}
+            </div>
+          </td>
+          <td class="p-10 text-xl">
+            <div class="pt-2">
+              {{ contents.categoryName }}
+            </div>
+          </td>
+
+          <td class="p-10 text-xl">
+            {{
+              moment(contents.eventStartTime).format("D MMMM YYYY, h:mm:ss A")
+            }}
+          </td>
+
+          <td class="p-10 text-xl">{{ contents.eventDuration }} minute</td>
+
+          <td>
+            <div id="showDetail">
+              <Detail
+                @moreDetail="moreDetail(contents)"
+                :detail="currentDetail"
+                @editDetail="modifySchedules"
+              />
+
+              <Delete @delete="removeSchedules(contents.id)" />
+            </div>
+          </td>
+        </tr>
+        <tr v-else v-for="contents in menu">
           <td class="p-10 text-xl">
             <div class="box-element break-words">
               {{ contents.bookingName }}

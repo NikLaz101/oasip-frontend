@@ -119,10 +119,10 @@ realTime();
                 required
               >
                 <option
-                  v-for="categorys in category"
-                  :value="categorys.eventCategoryName"
+                  v-for="categories in category"
+                  :value="categories.eventCategoryName"
                 >
-                  {{ categorys.eventCategoryName }}
+                  {{ categories.eventCategoryName }}
                 </option>
               </select>
             </div>
