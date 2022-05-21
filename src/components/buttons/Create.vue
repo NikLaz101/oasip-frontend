@@ -1,13 +1,7 @@
 <script setup>
-import { ref, onBeforeMount, computed } from "vue";
+import { ref, onBeforeMount } from "vue";
 import moment from "moment";
 defineEmits(["create"]);
-defineProps({
-  error: {
-    type: Object,
-    default: {},
-  },
-});
 
 const isModalOn = ref(false);
 const category = ref([]);
