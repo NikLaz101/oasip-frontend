@@ -17,7 +17,7 @@ const routes = [{
             component: Contents,
         },
         {
-            path: "",
+            path: "/category",
             name: "categoryContents",
             component: CategoryContent,
         },

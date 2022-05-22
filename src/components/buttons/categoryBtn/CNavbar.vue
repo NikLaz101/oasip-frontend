@@ -34,13 +34,13 @@ const categoryRouter = () =>
 
 <template>
     <th class="text-xl font-extrabold px-10">
-        <div class="dropdown">
+        <div class="dropdown dropdown-hover">
             <button tabindex="0" class="m-1 text-xl font-extrabold">
                 CATEGORY
             </button>
             <ul
                 tabindex="0"
-                class="dropdown-content menu p-2 bg-base-300 shadow rounded-box w-64 mt-7"
+                class="dropdown-content menu p-2 bg-base-300 shadow rounded-box w-64"
             >
                 <li>
                     <button class="text-xl" @click="scheduleRouter">Name</button>

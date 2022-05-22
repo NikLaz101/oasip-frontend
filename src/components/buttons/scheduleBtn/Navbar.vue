@@ -31,19 +31,21 @@ const categoryRouter = () =>
 
 <template>
     <th class="text-xl font-extrabold px-10">
-        <div class="dropdown">
+        <div class="dropdown dropdown-hover">
             <button tabindex="0" class="m-1 text-xl font-extrabold">
-                NAME
+                NAME 
             </button>
             <ul
                 tabindex="0"
-                class="dropdown-content menu p-2 bg-base-300 shadow rounded-box w-64 mt-7"
+                class="dropdown-content menu p-2 bg-base-300 shadow rounded-box w-64"
             >
                 <li>
-                    <button class="text-xl" @click="scheduleRouter">Name</button>
+                    <button class="text-xl" @click="scheduleRouter;">
+                        Name
+                    </button>
                 </li>
                 <li>
-                    <button class="text-xl" @click="categoryRouter ">
+                    <button class="text-xl" @click="categoryRouter">
                         Category
                     </button>
                 </li>
@@ -51,13 +53,13 @@ const categoryRouter = () =>
         </div>
     </th>
     <th class="px-10">
-        <div class="dropdown">
+        <div class="dropdown dropdown-hover">
             <button tabindex="0" class="m-1 text-xl font-extrabold">
                 CLINIC
             </button>
             <ul
                 tabindex="0"
-                class="dropdown-content menu p-2 bg-base-300 shadow rounded-box w-64 mt-7"
+                class="dropdown-content menu p-2 bg-base-300 shadow rounded-box w-64"
             >
                 <li>
                     <button @click="$emit('option', 0)" class="text-xl">
@@ -81,13 +83,13 @@ const categoryRouter = () =>
         </div>
     </th>
     <th class="px-10">
-        <div class="dropdown">
+        <div class="dropdown dropdown-hover">
             <button tabindex="0" class="m-1 text-xl font-extrabold">
                 DATE
             </button>
             <ul
                 tabindex="0"
-                class="dropdown-content menu p-2 bg-base-300 shadow rounded-box w-64 mt-7"
+                class="dropdown-content menu p-2 bg-base-300 shadow rounded-box w-64"
             >
                 <li><button class="text-xl">Upcoming</button></li>
                 <li><button class="text-xl">Past</button></li>
