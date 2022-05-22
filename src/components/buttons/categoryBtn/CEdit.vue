@@ -9,7 +9,6 @@ defineProps({
     },
 });
 
-const edit = ref(false);
 const isModalOn = ref(false);
 </script>
 
@@ -18,7 +17,6 @@ const isModalOn = ref(false);
         class="btn modal-button"
         @click="
             $emit('moreDetail');
-            edit = !edit;
             isModalOn = !isModalOn;
         "
     >
@@ -31,55 +29,79 @@ const isModalOn = ref(false);
             </div>
             <div class="flex justify-center">
                 <div>
-                    <div
-                        v-show="edit"
-                        class="text-base font-medium grid justify-center py-2"
+                    <form
+                        method="post"
+                        @submit.prevent="
+                            $emit(
+                                'editDetail',
+                                detail.id,
+                                detail.eventCategoryName,
+                                detail.eventCategoryDescription,
+                                detail.eventDuration
+                            );
+                            isModalOn = !isModalOn;
+                        "
                     >
-                    <p>Category Name</p>
-                        <input
-                            type="text"
-                            v-model="detail.eventCategoryName"
-                            class="text-black"
-                        />
-                    </div>
-                    <div class="text-base font-medium grid justify-center py-2">
-                        <div v-show="edit">
-                        <p>Description</p>
-                            <textarea
-                                cols="50"
-                                rows="3"
-                                v-model="detail.eventCategoryDescription"
-                                class="text-black p-2"
-                            ></textarea>
+                        <div
+                            v-show="isModalOn"
+                            class="text-base font-medium grid justify-center py-2"
+                        >
+                            <p class="grid justify-center font-bold text-4xl mb-4 font-header">Category Name</p>
+                            <input
+                                type="text"
+                                v-model="detail.eventCategoryName"
+                                class="text-black p-1 m-1 rounded-md"
+                                maxlength="100"
+                                required
+                            />
                         </div>
-                    </div>
-                    <div class="text-base font-medium grid justify-center py-2">
-                        <p>Duration : <span>{{ detail.eventDuration }}</span></p>
-                    </div>
-                    <div class="flex justify-end">
-                        <button
-                            class="btn m-2"
-                            v-show="edit"
-                            @click="
-                                $emit(
-                                    'editDetail',
-                                    detail.id,
-                                    detail.eventCategoryName,
-                                    detail.eventCategoryDescription
-                                );
-                                isModalOn = !isModalOn;
-                            "
+                        <div
+                            class="text-base font-medium grid justify-center py-2"
                         >
-                            OK
-                        </button>
-                        <button
-                            class="btn m-2"
-                            v-show="edit"
-                            @click="isModalOn = !isModalOn;"
+                            <div v-show="isModalOn">
+                                <p class="grid justify-center font-bold text-2xl mb-4 font-header">Description</p>
+                                <textarea
+                                    cols="50"
+                                    rows="3"
+                                    maxlength="500"
+                                    v-model="detail.eventCategoryDescription"
+                                    class="text-black p-2 m-1 rounded-md"
+                                ></textarea>
+                            </div>
+                        </div>
+                        <div
+                            class="text-lg font-medium grid justify-center py-2"
                         >
-                            Cancel
-                        </button>
-                    </div>
+                            <p>
+                                Duration :
+                                <input
+                                    type="number"
+                                    min="1"
+                                    max="480"
+                                    v-model="detail.eventDuration"
+                                    class="text-black p-1 m-1 rounded-md"
+                                    required
+                                />
+                                <span>min: 1 | max: 480</span>
+                            </p>
+                        </div>
+                        <div class="flex justify-end">
+                            <input
+                                class="btn m-2"
+                                v-show="isModalOn"
+                                type="submit"
+                                value="OK"
+                            />
+                            <input
+                                class="btn m-2"
+                                v-show="isModalOn"
+                                type="button"
+                                value="Cancel"
+                                @click="
+                                isModalOn = !isModalOn;"
+                            />
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -87,6 +109,9 @@ const isModalOn = ref(false);
 </template>
 
 <style scoped>
+.auto-fill {
+    color: #8f8f8f;
+}
 .font-header {
     color: #ff9d00;
 }

@@ -1,4 +1,4 @@
-<script setup>
+<!-- <script setup>
 import Category from "../components/Category.vue"
 </script>
 
@@ -9,4 +9,4 @@ import Category from "../components/Category.vue"
     </div>
 </template>
 
-<style scoped></style>
+<style scoped></style> -->

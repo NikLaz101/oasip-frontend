@@ -1,7 +1,6 @@
 <script setup>
 import moment from "moment";
 import { ref } from "vue";
-
 defineEmits(["moreDetail", "editDetail"]);
 defineProps({
     detail: {
@@ -9,9 +8,16 @@ defineProps({
         require: true,
     },
 });
-
 const edit = ref(false);
 const isModalOn = ref(false);
+const date = ref();
+function updateTime() {
+    date.value = moment().format("YYYY-MM-DDTHH:mm:ss");
+}
+var realTime = () => {
+    setInterval(updateTime, 1000);
+};
+realTime();
 </script>
 
 <template>
@@ -32,12 +38,10 @@ const isModalOn = ref(false);
             </div>
             <div class="flex justify-center">
                 <div>
-                    <div
-                        class="text-3xl font-bold flex justify-center"
-                    >
-                    <p class="font-header">
-                      {{ detail.bookingName }}
-                    </p>
+                    <div class="text-3xl font-bold flex justify-center">
+                        <p class="font-header">
+                            {{ detail.bookingName }}
+                        </p>
                         <button
                             v-show="!edit"
                             @click="edit = !edit"
@@ -72,81 +76,98 @@ const isModalOn = ref(false);
                             {{ detail.categoryName }}
                         </div>
                     </div>
-                    <div
-                        v-show="!edit"
-                        class="text-base font-medium grid justify-center py-2"
+                    <!-- form -->
+                    <form
+                        method="post"
+                        @submit.prevent="
+                            $emit(
+                                'editDetail',
+                                detail.id,
+                                detail.eventStartTime,
+                                detail.eventNotes
+                            );
+                            edit = !edit;
+                        "
                     >
-                        {{
-                            moment(detail.eventStartTime).format(
-                                "D MMMM YYYY, h:mm:ss A"
-                            )
-                        }}
-                    </div>
-                    <div
-                        v-show="edit"
-                        class="text-base font-medium grid justify-center py-2"
-                    >
-                        <input
-                            type="datetime-local"
-                            v-model="detail.eventStartTime"
-                            class="text-black"
-                        />
-                    </div>
-                    <div class="text-2xl font-bold grid justify-center py-2">
-                        <div>
-                            <span class="font-header">Duration : </span
-                            ><span>{{ detail.eventDuration }} minutes</span>
-                        </div>
-                    </div>
-                    <div class="grid justify-center">
-                        <p
-                            class="text-lg font-bold opacity-50 grid justify-center py-3"
-                        >
-                            Note
-                        </p>
                         <div
                             v-show="!edit"
-                            v-if="detail.eventNotes != null"
-                            class="text-base font-medium py-2"
+                            class="text-base font-medium grid justify-center py-2"
                         >
-                            {{ detail.eventNotes }}
+                            {{
+                                moment(detail.eventStartTime).format(
+                                    "D MMMM YYYY, h:mm:ss A"
+                                )
+                            }}
                         </div>
                         <div
-                            v-show="!edit"
-                            v-else-if="typeof detail.eventNotes"
-                            class="text-base font-medium opacity-50 py-2"
+                            v-show="edit"
+                            class="text-base font-medium grid justify-center py-2"
                         >
-                            <b>No messages</b>
+                            <input
+                                type="datetime-local"
+                                v-model="detail.eventStartTime"
+                                :min="date"
+                                step="any"
+                                class="text-black p-1 rounded-md"
+                                required
+                            />
                         </div>
-                        <div v-show="edit" class="py-2">
-                            <textarea
-                                cols="50"
-                                rows="3"
-                                v-model="detail.eventNotes"
-                                class="text-black p-2"
-                            ></textarea>
+                        <div
+                            class="text-2xl font-bold grid justify-center py-2"
+                        >
+                            <div>
+                                <span class="font-header">Duration : </span
+                                ><span>{{ detail.eventDuration }} minutes</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex justify-end">
-                      <button
-                          class="btn m-2"
-                          v-show="edit"
-                          @click="
-                              $emit(
-                                  'editDetail',
-                                  detail.id,
-                                  detail.eventStartTime,
-                                  detail.eventNotes
-                              );
-                              edit = !edit;
-                          "
-                      >
-                          OK
-                      </button>
-                      <button class="btn m-2" v-show="edit" @click="edit = !edit">
-                          Cancel
-                      </button>
-                    </div>
+                        <div class="grid justify-center">
+                            <p
+                                class="text-lg font-bold opacity-50 grid justify-center py-3"
+                            >
+                                Note
+                            </p>
+                            <div
+                                v-show="!edit"
+                                v-if="
+                                    detail.eventNotes != null &&
+                                    detail.eventNotes.trim() != ''
+                                "
+                                class="text-base font-medium py-2 "
+                            >
+                                {{ detail.eventNotes }}
+                            </div>
+                            <div
+                                v-show="!edit"
+                                v-else-if="typeof detail.eventNotes"
+                                class="text-base font-medium opacity-50 py-2"
+                            >
+                                <b>No messages</b>
+                            </div>
+                            <div v-show="edit" class="py-2">
+                                <textarea
+                                    cols="50"
+                                    rows="3"
+                                    v-model="detail.eventNotes"
+                                    class="text-black p-2 rounded-md"
+                                ></textarea>
+                            </div>
+                        </div>
+                        <div class="flex justify-end">
+                            <input
+                                class="btn m-2"
+                                v-show="edit"
+                                type="submit"
+                                value="OK"
+                            />
+                            <input
+                                class="btn m-2"
+                                v-show="edit"
+                                type="button"
+                                value="Cancel"
+                                @click="edit = !edit"
+                            />
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -178,7 +199,6 @@ const isModalOn = ref(false);
     font-size: 28px;
     font-weight: bold;
 }
-
 .close:hover,
 .close:focus {
     color: rgb(82, 80, 80);
