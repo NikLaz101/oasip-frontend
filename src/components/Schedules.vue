@@ -89,10 +89,6 @@ const createNewSchedules = async (
   });
   if (res.status === 201) {
     getSchedules();
-    // } else if (res.status === 400) {
-    //   error.value = await res.json();
-    // console.log(error.value);
-    // console.log(JSON.stringify(error.value).length);
   } else console.log("error, cannot be added");
 };
 const currentDetail = ref({});
