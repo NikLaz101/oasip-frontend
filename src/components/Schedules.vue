@@ -106,7 +106,7 @@ const clinic = ref();
 const getClinic = async (id) => {
   if (id !== 0) {
     menu.value = undefined;
-    const res = await fetch(import.meta.env.VITE_CATEGORY_URL + "/" + id);
+    const res = await fetch(import.meta.env.VITE_CATEGORY_URL + "/" + id +'/events');
     if (res.status === 200) {
       clinic.value = await res.json();
       console.log(clinic.value);
@@ -147,8 +147,9 @@ const getPast = async () => {
         </tr>
       </thead>
       <div
-        v-if="schedules < 1"
-        class="no-event text-5xl pt-20"
+        id="Noevent"
+        v-if="(schedules && clinic < 1) || menu < 1"
+        class="text-5xl pt-20"
         v-cloak
       >
         No Scheduled Events
@@ -267,26 +268,25 @@ const getPast = async () => {
 [v-cloak] {
   display: none;
 }
-
-.no-event {
+.textarea {
+  @apply textarea-ghost focus:outline-none;
+}
+#Noevent {
   text-align: center;
   width: 100%;
   position: absolute;
   z-index: -1;
 }
-
 table {
   text-align: left;
   position: relative;
   border-collapse: collapse;
   border-radius: 6px;
 }
-
 input,
 textarea {
   color: rgb(0 0 0);
 }
-
 .table-header {
   position: sticky;
   top: 0;
