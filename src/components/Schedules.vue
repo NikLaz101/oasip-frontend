@@ -146,7 +146,7 @@ const getPast = async () => {
         </tr>
       </thead>
       <div
-        v-if="schedules < 1"
+        v-if="(schedules && clinic < 1) || menu < 1"
         class="no-event text-5xl pt-20"
         v-cloak
       >
