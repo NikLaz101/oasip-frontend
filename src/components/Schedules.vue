@@ -118,7 +118,7 @@ const getClinic = async (id) => {
 
 const menu = ref();
 const getUpcoming = async () => {
-  const res = await fetch(import.meta.env.VITE_EVENT_URL + "/" + "upcoming");
+  const res = await fetch(import.meta.env.VITE_EVENT_URL + "/upcoming");
   if (res.status === 200) {
     menu.value = await res.json();
     console.log(menu.value);
@@ -126,7 +126,7 @@ const getUpcoming = async () => {
 };
 
 const getPast = async () => {
-  const res = await fetch(import.meta.env.VITE_EVENT_URL + "/" + "past");
+  const res = await fetch(import.meta.env.VITE_EVENT_URL + "/past");
   if (res.status === 200) {
     menu.value = await res.json();
     console.log(menu.value);
