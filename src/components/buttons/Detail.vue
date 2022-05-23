@@ -8,6 +8,10 @@ defineProps({
     type: Object,
     require: true,
   },
+  data: {
+    type: String,
+    require:true,
+  }
 });
 
 const edit = ref(false);
@@ -119,7 +123,9 @@ realTime();
               </p>
               <div
                 v-show="!edit"
-                v-if="detail.eventNotes != null && detail.eventNotes.trim() != ''"
+                v-if="
+                  detail.eventNotes != null && detail.eventNotes.trim() != ''
+                "
                 class="text-base font-medium py-2"
               >
                 {{ detail.eventNotes }}
@@ -129,20 +135,27 @@ realTime();
                 v-else-if="typeof detail.eventNotes"
                 class="text-base font-medium opacity-50 py-2"
               >
-                <b>No messages</b>
+                No messages
               </div>
               <div v-show="edit" class="py-2">
                 <textarea
                   cols="50"
                   rows="3"
-                  v-model="detail.eventNotes"
+                  v-model="data"
                   class="text-black p-2"
                 ></textarea>
               </div>
             </div>
             <div class="flex justify-end">
-              <input class="btn m-2" v-show="edit" type="submit" value="OK" />
-              <input class="btn m-2" v-show="edit" type="button" value="Cancel" @click="edit = !edit" />
+              <input class="btn m-2" v-show="edit" type="submit" value="OK" @click="detail.eventNotes = data" />
+              <input
+                class="btn m-2"
+                v-show="edit"
+                type="button"
+                value="Cancel"
+                @click="edit = !edit
+                "
+              />
             </div>
           </form>
         </div>

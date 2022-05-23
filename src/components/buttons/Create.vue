@@ -2,7 +2,12 @@
 import { ref, onBeforeMount } from "vue";
 import moment from "moment";
 defineEmits(["create"]);
-
+const props = defineProps({
+  detail: {
+    type: Array,
+    require: true,
+  },
+});
 const isModalOn = ref(false);
 const category = ref([]);
 const URL = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
@@ -27,6 +32,30 @@ const Duration = ref();
 const Notes = ref("");
 const selectedId = ref();
 
+const isOverlap = ref(false);
+const overlap = () => {
+  var startTime = moment(Time.value).format();
+  var endTime = moment(Time.value).add(Duration.value, "minutes").format();
+  props.detail.forEach((e) => {
+    if (e.categoryId === selectedId.value) {
+      var startTime_2 = e.eventStartTime;
+      var endTime_2 = moment(e.eventStartTime)
+        .add(e.eventDuration, "minute")
+        .format();
+      if (checkOverlap(startTime, endTime, startTime_2, endTime_2)) {
+        isOverlap.value = true;
+        console.log("Overlap");
+      }
+    }
+  });
+};
+
+const checkOverlap = (start_1, end_1, start_2, end_2) => {
+  if (start_1 <= start_2 && start_2 <= end_1) return true;
+  if (start_1 <= end_2 && end_2 <= end_1) return true;
+  if (start_2 < start_1 && end_1 < end_2) return true;
+  return false;
+};
 const newDuration = () => {
   category.value.forEach((category) => {
     if (category.eventCategoryName === Selected.value) {
@@ -71,13 +100,15 @@ realTime();
         <form
           method="post"
           @submit.prevent="
-            $emit('create', Name, Email, selectedId, Time, Duration, Notes);
+            $emit('create', Name, Email, selectedId, Time, Duration, Notes, isOverlap);
             Name == undefined ||
             Email == undefined ||
             Selected == undefined ||
-            Time == undefined
+            Time == undefined ||
+            isOverlap == true
               ? isModalOn
               : (isModalOn = !isModalOn);
+            isOverlap = false;
           "
         >
           <div class="grid justify-center">
@@ -161,8 +192,8 @@ realTime();
             </div>
           </div>
           <div class="flex justify-end pt-2">
-            <!-- <button class="btn">Create</button> -->
-            <input class="btn" type="submit" value="Create" />
+            <!-- Create -->
+            <input class="btn" type="submit" value="Create" @click="overlap()" />
           </div>
         </form>
       </div>

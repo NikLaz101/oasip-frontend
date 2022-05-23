@@ -61,35 +61,43 @@ const createNewSchedules = async (
   selectedId,
   Time,
   Duration,
-  Notes
+  Notes,
+  isOverlap
 ) => {
-  const res = await fetch(URL, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      bookingName: Name,
-      bookingEmail: Email,
-      categoryId: selectedId,
-      eventStartTime: Time + "+07:00",
-      eventDuration: Duration,
-      eventNotes: Notes.trim() == "" ? null : Notes.trim(),
-    }),
-  });
-  if (res.status === 201) {
-    getSchedules();
-  } else console.log("error, cannot be added");
+  console.log(isOverlap);
+  if (isOverlap) {
+    alert("Overlap"); 
+  } else {
+    const res = await fetch(URL, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        bookingName: Name,
+        bookingEmail: Email,
+        categoryId: selectedId,
+        eventStartTime: Time + "+07:00",
+        eventDuration: Duration,
+        eventNotes: Notes.trim() == "" ? null : Notes.trim(),
+      }),
+    });
+    if (res.status === 201) {
+      getSchedules();
+    } else console.log("error, cannot be added");
+  }
 };
+
 const currentDetail = ref({});
+const data = ref("");
+
 const moreDetail = (curbookingId) => {
   currentDetail.value = curbookingId;
+  data.value = curbookingId.eventNotes;
   currentDetail.value.eventStartTime = moment(
     currentDetail.value.eventStartTime
   ).format("YYYY-MM-DDTHH:mm:ss");
-  if (currentDetail.value.eventNotes === "") {
-    currentDetail.value.eventNotes = null;
-  } else currentDetail.value.eventNotes = curbookingId.eventNotes;
+  getSchedules();
 };
 
 const clinic = ref();
@@ -132,13 +140,13 @@ const getPast = async () => {
         <tr>
           <Navbar @option="getClinic" @upcoming="getUpcoming" @past="getPast" />
           <th>
-            <Create @create="createNewSchedules" />
+            <Create :detail="schedules" @create="createNewSchedules" />
           </th>
         </tr>
       </thead>
       <div
         id="Noevent"
-        v-if="schedules && clinic < 1 || menu < 1"
+        v-if="(schedules && clinic < 1) || menu < 1"
         class="text-5xl pt-20"
         v-cloak
       >
@@ -146,7 +154,7 @@ const getPast = async () => {
       </div>
       <tbody v-else>
         <tr
-          v-if="clinic == undefined && menu == undefined" 
+          v-if="clinic == undefined && menu == undefined"
           v-for="contents in schedules"
           :key="contents.id"
         >
@@ -174,6 +182,7 @@ const getPast = async () => {
               <Detail
                 @moreDetail="moreDetail(contents)"
                 :detail="currentDetail"
+                :data="data"
                 @editDetail="modifySchedules"
               />
 
@@ -206,6 +215,7 @@ const getPast = async () => {
               <Detail
                 @moreDetail="moreDetail(contents)"
                 :detail="currentDetail"
+                :data="data"
                 @editDetail="modifySchedules"
               />
 
@@ -238,6 +248,7 @@ const getPast = async () => {
               <Detail
                 @moreDetail="moreDetail(contents)"
                 :detail="currentDetail"
+                :data="data"
                 @editDetail="modifySchedules"
               />
 
