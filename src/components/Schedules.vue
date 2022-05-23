@@ -102,10 +102,10 @@ const moreDetail = (curbookingId) => {
 };
 
 const clinic = ref();
-const getClinic = async (e) => {
-  if (e !== 0) {
+const getClinic = async (id) => {
+  if (id !== 0) {
     menu.value = undefined;
-    const res = await fetch(import.meta.env.VITE_CATEGORY_URL + "/" + e);
+    const res = await fetch(import.meta.env.VITE_CATEGORY_URL + "/" + id + "/events");
     if (res.status === 200) {
       clinic.value = await res.json();
       console.log(clinic.value);
