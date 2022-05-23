@@ -146,8 +146,9 @@ const getPast = async () => {
         </tr>
       </thead>
       <div
+        id="Noevent"
         v-if="(schedules && clinic < 1) || menu < 1"
-        class="no-event text-5xl pt-20"
+        class="text-5xl pt-20"
         v-cloak
       >
         No Scheduled Events
@@ -191,6 +192,72 @@ const getPast = async () => {
             </div>
           </td>
         </tr>
+        <tr v-else-if="menu == undefined" v-for="contents in clinic">
+          <td class="p-10 text-xl">
+            <div class="box-element break-words">
+              {{ contents.bookingName }}
+            </div>
+          </td>
+          <td class="p-10 text-xl">
+            <div class="pt-2">
+              {{ contents.categoryName }}
+            </div>
+          </td>
+
+          <td class="p-10 text-xl">
+            {{
+              moment(contents.eventStartTime).format("D MMMM YYYY, h:mm:ss A")
+            }}
+          </td>
+
+          <td class="p-10 text-xl">{{ contents.eventDuration }} minute</td>
+
+          <td>
+            <div id="showDetail">
+              <Detail
+                @moreDetail="moreDetail(contents)"
+                :detail="currentDetail"
+                :data="data"
+                @editDetail="modifySchedules"
+              />
+
+              <Delete @delete="removeSchedules(contents.id)" />
+            </div>
+          </td>
+        </tr>
+        <tr v-else v-for="contents in menu">
+          <td class="p-10 text-xl">
+            <div class="box-element break-words">
+              {{ contents.bookingName }}
+            </div>
+          </td>
+          <td class="p-10 text-xl">
+            <div class="pt-2">
+              {{ contents.categoryName }}
+            </div>
+          </td>
+
+          <td class="p-10 text-xl">
+            {{
+              moment(contents.eventStartTime).format("D MMMM YYYY, h:mm:ss A")
+            }}
+          </td>
+
+          <td class="p-10 text-xl">{{ contents.eventDuration }} minute</td>
+
+          <td>
+            <div id="showDetail">
+              <Detail
+                @moreDetail="moreDetail(contents)"
+                :detail="currentDetail"
+                :data="data"
+                @editDetail="modifySchedules"
+              />
+
+              <Delete @delete="removeSchedules(contents.id)" />
+            </div>
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -205,7 +272,7 @@ const getPast = async () => {
   @apply textarea-ghost focus:outline-none;
 }
 
-.no-event {
+#Noevent {
   text-align: center;
   width: 100%;
   position: absolute;
@@ -260,3 +327,4 @@ textarea {
   background-color: rgba(0, 0, 0, 0.4);
 }
 </style>
+
