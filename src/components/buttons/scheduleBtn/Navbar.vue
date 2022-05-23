@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 defineEmits(["option",'upcoming','past']);
 const category = ref([]);
 const appRouter = useRouter();
+
 // GET
 const getCategories = async () => {
     const res = await fetch(import.meta.env.VITE_CATEGORY_URL);
