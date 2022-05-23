@@ -3,7 +3,7 @@ import moment from "moment";
 import { ref } from "vue";
 
 defineEmits(["moreDetail", "editDetail"]);
-defineProps({
+const props = defineProps({
   detail: {
     type: Object,
     require: true,
@@ -11,6 +11,10 @@ defineProps({
   data: {
     type: String,
     require:true,
+  },
+  event: {
+      type: Array,
+      require:true,
   }
 });
 
@@ -25,6 +29,33 @@ var realTime = () => {
   setInterval(updateTime, 1000);
 };
 realTime();
+
+const isOverlap = ref(false);
+const error = ref(false);
+const overlap = () => {
+  var startTime = moment(props.detail.eventStartTime).format();
+  var endTime = moment(props.detail.eventStartTime).add(props.detail.eventDuration, "minutes").format();
+  props.event.forEach((e) => {
+    if (e.categoryId === props.detail.categoryId && e.id !== props.detail.id) {
+      var startTime_2 = e.eventStartTime;
+      var endTime_2 = moment(e.eventStartTime)
+        .add(e.eventDuration, "minute")
+        .format();
+      if (checkOverlap(startTime, endTime, startTime_2, endTime_2)) {
+        isOverlap.value = true;
+        error.value = true;
+        console.log("Overlap");
+      }
+    }
+  });
+};
+
+const checkOverlap = (start_1, end_1, start_2, end_2) => {
+  if (start_1 <= start_2 && start_2 <= end_1) return true;
+  if (start_1 <= end_2 && end_2 <= end_1) return true;
+  if (start_2 < start_1 && end_1 < end_2) return true;
+  return false;
+};
 </script>
 
 <template>
@@ -33,6 +64,7 @@ realTime();
     @click="
       $emit('moreDetail');
       edit = false;
+      error = false;
       isModalOn = !isModalOn;
     "
   >
@@ -85,9 +117,13 @@ realTime();
                 'editDetail',
                 detail.id,
                 detail.eventStartTime,
-                detail.eventNotes
+                detail.eventNotes,
+                isOverlap
               );
-              edit = !edit;
+              (isOverlap == true
+              ? edit
+              : ( edit = !edit));
+              isOverlap = false;
             "
           >
             <div
@@ -110,6 +146,9 @@ realTime();
                 class="text-black"
                 required
               />
+               <p class="text-red-600" v-show="error">
+                Error this start time is overlaped other event!!!
+              </p>
             </div>
             <div class="text-2xl font-bold grid justify-center py-2">
               <div>
@@ -147,7 +186,7 @@ realTime();
               </div>
             </div>
             <div class="flex justify-end">
-              <input class="btn m-2" v-show="edit" type="submit" value="OK" @click="detail.eventNotes = data" />
+              <input class="btn m-2" v-show="edit" type="submit" value="OK" @click="detail.eventNotes = data; overlap()" />
               <input
                 class="btn m-2"
                 v-show="edit"

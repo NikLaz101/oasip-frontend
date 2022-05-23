@@ -1,18 +1,18 @@
 <script setup>
 import { ref, onBeforeMount } from "vue";
 import moment from "moment";
-import Detail from "./buttons/Detail.vue";
-import Create from "./buttons/Create.vue";
-import Delete from "./buttons/Delete.vue";
-import Navbar from "./buttons/Navbar.vue";
+import Detail from "./buttons/scheduleBtn/Detail.vue";
+import Create from "./buttons/scheduleBtn/Create.vue";
+import Delete from "./buttons/scheduleBtn/Delete.vue";
+import Navbar from "./buttons/scheduleBtn/Navbar.vue";
 
 const schedules = ref([]);
-const URL = "http://intproj21.sit.kmutt.ac.th/at1/api/event";
-const URLC = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
+const URL_EVENT = "http://intproj21.sit.kmutt.ac.th/at1/api/event"
+const URL_CATEGORY = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
 
 // GET
 const getSchedules = async () => {
-  const res = await fetch(URL);
+  const res = await fetch(URL_EVENT);
   if (res.status === 200) {
     schedules.value = await res.json();
   } else console.log("error, cannot get data");
@@ -24,7 +24,7 @@ onBeforeMount(async () => {
 //DELETE
 const removeSchedules = async (removeContentID) => {
   if (confirm("Do you really want to delete")) {
-    const res = await fetch(URL + "/" + removeContentID, {
+    const res = await fetch(URL_EVENT + "/" + removeContentID, {
       method: "DELETE",
     });
     if (res.status === 200) {
@@ -37,21 +37,25 @@ const removeSchedules = async (removeContentID) => {
 };
 
 // EDIT
-const modifySchedules = async (newid, newtime, newnotes) => {
-  const res = await fetch(URL + "/" + newid, {
+const modifySchedules = async (newid, newtime, newnotes, isOverlap) => {
+  console.log(isOverlap);
+  if(isOverlap){
+  }else{
+  const res = await fetch(URL_EVENT + "/" + newid, {
     method: "PUT",
     headers: {
       "content-type": "application/json",
     },
     body: JSON.stringify({
       eventStartTime: newtime + "+07:00",
-      eventNotes: newnotes.trim() == "" ? null : newnotes.trim(),
+      eventNotes: newnotes == null ? null : newnotes.trim(),
     }),
   });
   if (res.status === 200) {
     getSchedules();
     console.log("edited successfully");
   } else console.log("error, cannot edit");
+}
 };
 
 // POST
@@ -66,9 +70,8 @@ const createNewSchedules = async (
 ) => {
   console.log(isOverlap);
   if (isOverlap) {
-    alert("Overlap"); 
   } else {
-    const res = await fetch(URL, {
+    const res = await fetch(URL_EVENT, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -104,7 +107,7 @@ const clinic = ref();
 const getClinic = async (e) => {
   if (e !== 0) {
     menu.value = undefined;
-    const res = await fetch(URLC + "/" + e);
+    const res = await fetch(URL_CATEGORY + "/" + e);
     if (res.status === 200) {
       clinic.value = await res.json();
       console.log(clinic.value);
@@ -117,7 +120,7 @@ const getClinic = async (e) => {
 
 const menu = ref();
 const getUpcoming = async () => {
-  const res = await fetch(URL + "/" + "upcoming");
+  const res = await fetch(URL_EVENT + "/" + "upcoming");
   if (res.status === 200) {
     menu.value = await res.json();
     console.log(menu.value);
@@ -125,7 +128,7 @@ const getUpcoming = async () => {
 };
 
 const getPast = async () => {
-  const res = await fetch(URL + "/" + "past");
+  const res = await fetch(URL_EVENT + "/" + "past");
   if (res.status === 200) {
     menu.value = await res.json();
     console.log(menu.value);
@@ -183,6 +186,7 @@ const getPast = async () => {
                 @moreDetail="moreDetail(contents)"
                 :detail="currentDetail"
                 :data="data"
+                :event="schedules"
                 @editDetail="modifySchedules"
               />
 
