@@ -19,7 +19,6 @@ const getSchedules = async () => {
 onBeforeMount(async () => {
   await getSchedules();
 });
-
 //DELETE
 const removeSchedules = async (removeContentID) => {
   if (confirm("Do you really want to delete")) {
@@ -103,10 +102,10 @@ const moreDetail = (curbookingId) => {
 };
 
 const clinic = ref();
-const getClinic = async (id) => {
-  if (id !== 0) {
+const getClinic = async (e) => {
+  if (e !== 0) {
     menu.value = undefined;
-    const res = await fetch(import.meta.env.VITE_CATEGORY_URL + "/" + id +'/events');
+    const res = await fetch(import.meta.env.VITE_CATEGORY_URL + "/" + e);
     if (res.status === 200) {
       clinic.value = await res.json();
       console.log(clinic.value);
@@ -147,9 +146,8 @@ const getPast = async () => {
         </tr>
       </thead>
       <div
-        id="Noevent"
-        v-if="(schedules && clinic < 1) || menu < 1"
-        class="text-5xl pt-20"
+        v-if="schedules < 1"
+        class="no-event text-5xl pt-20"
         v-cloak
       >
         No Scheduled Events
@@ -268,25 +266,30 @@ const getPast = async () => {
 [v-cloak] {
   display: none;
 }
+
 .textarea {
   @apply textarea-ghost focus:outline-none;
 }
-#Noevent {
+
+.no-event {
   text-align: center;
   width: 100%;
   position: absolute;
   z-index: -1;
 }
+
 table {
   text-align: left;
   position: relative;
   border-collapse: collapse;
   border-radius: 6px;
 }
+
 input,
 textarea {
   color: rgb(0 0 0);
 }
+
 .table-header {
   position: sticky;
   top: 0;
