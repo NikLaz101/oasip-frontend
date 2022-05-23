@@ -4,10 +4,9 @@ import { useRouter } from "vue-router";
 defineEmits(["option",'upcoming','past']);
 const category = ref([]);
 const appRouter = useRouter();
-const URL_CATEGORY = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
 // GET
 const getCategories = async () => {
-    const res = await fetch(URL_CATEGORY);
+    const res = await fetch(import.meta.env.VITE_CATEGORY_URL;
     if (res.status === 200) {
         category.value = await res.json();
     } else console.log("error, cannot get data");
