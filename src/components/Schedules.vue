@@ -36,19 +36,19 @@ const removeSchedules = async (removeContentID) => {
   }
 };
 
-// EDIT
-const modifySchedules = async (newid, newtime, newnotes, isOverlap) => {
+// PUT
+const modifySchedules = async (newId, newTime, newNotes, isOverlap) => {
   console.log(isOverlap);
   if(isOverlap){
   }else{
-  const res = await fetch(URL_EVENT + "/" + newid, {
+  const res = await fetch(URL_EVENT + "/" + newId, {
     method: "PUT",
     headers: {
       "content-type": "application/json",
     },
     body: JSON.stringify({
-      eventStartTime: newtime + "+07:00",
-      eventNotes: newnotes == null ? null : newnotes.trim(),
+      eventStartTime: newTime + "+07:00",
+      eventNotes: newNotes == null ? null : newNotes.trim(),
     }),
   });
   if (res.status === 200) {
@@ -148,9 +148,8 @@ const getPast = async () => {
         </tr>
       </thead>
       <div
-        id="Noevent"
-        v-if="(schedules && clinic < 1) || menu < 1"
-        class="text-5xl pt-20"
+        v-if="schedules < 1"
+        class="no-event text-5xl pt-20"
         v-cloak
       >
         No Scheduled Events
@@ -274,7 +273,7 @@ const getPast = async () => {
   @apply textarea-ghost focus:outline-none;
 }
 
-#Noevent {
+.no-event {
   text-align: center;
   width: 100%;
   position: absolute;

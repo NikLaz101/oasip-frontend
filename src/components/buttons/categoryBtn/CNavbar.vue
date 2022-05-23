@@ -19,7 +19,7 @@ onBeforeMount(async () => {
     await getSchedules();
 });
 
-const scheduleRouter = () =>appRouter.push({name: "contents"});
+const scheduleRouter = () =>appRouter.push({name: "scheduleContents"});
 const categoryRouter = () => appRouter.push({ name: "categoryContents"});
 </script>
 
@@ -46,4 +46,15 @@ const categoryRouter = () => appRouter.push({ name: "categoryContents"});
     <th class="text-xl font-extrabold px-10">DURATION</th>
 </template>
 
-<style></style>
+<style scoped>
+.arrow {
+  border: solid rgb(255, 255, 255);
+  border-width: 0 4px 4px 0;
+  display: inline-block;
+  padding: 3px;
+}
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+</style>

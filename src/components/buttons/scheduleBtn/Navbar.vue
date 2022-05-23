@@ -19,7 +19,7 @@ onBeforeMount(async () => {
     await getCategories();
 });
 
-const scheduleRouter = () => appRouter.push({ name: "contents",});
+const scheduleRouter = () => appRouter.push({ name: "scheduleContents",});
 const categoryRouter = () => appRouter.push({ name: "categoryContents",});
 
 </script>
@@ -28,7 +28,7 @@ const categoryRouter = () => appRouter.push({ name: "categoryContents",});
     <th class="text-xl font-extrabold px-10">
         <div class="dropdown dropdown-hover">
             <button tabindex="0" class="m-1 text-xl font-extrabold">
-              <p class="">  NAME <i class="arrow down ml-3 mb-1"></i></p>
+              <p>NAME<i class="arrow down ml-3 mb-1"></i></p>
             </button>
             <ul
                 tabindex="0"
@@ -75,8 +75,7 @@ const categoryRouter = () => appRouter.push({ name: "categoryContents",});
   </th>  <th class="text-xl font-extrabold px-10">DURATION</th>
 </template>
 
-<style>
-
+<style scoped>
 .arrow {
   border: solid rgb(255, 255, 255);
   border-width: 0 4px 4px 0;

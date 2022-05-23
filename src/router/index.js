@@ -5,7 +5,7 @@ import CategoryContent from "../views/CategoryContent.vue";
 const history = createWebHistory();
 const routes = [{
         path: "/",
-        name: "contents",
+        name: "scheduleContents",
         component: Contents,
     },
     {

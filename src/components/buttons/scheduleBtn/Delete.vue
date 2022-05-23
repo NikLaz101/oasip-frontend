@@ -3,7 +3,7 @@ defineEmits(["delete"]);
 </script>
 
 <template>
-    <button id="del" class="m-2 w-10 p-3">
+    <button class="m-2 w-10 p-3 del">
         <svg 
             xmlns="http://www.w3.org/2000/svg"
             class="h-6 w-6"
@@ -23,7 +23,7 @@ defineEmits(["delete"]);
 </template>
 
 <style scoped>
-#del:hover {
+.del:hover {
   color: #dc3545;
 }
 </style>

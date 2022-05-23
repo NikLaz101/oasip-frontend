@@ -4,38 +4,38 @@ import CEdit from "./buttons/categoryBtn/CEdit.vue";
 import CDelete from "./buttons/categoryBtn/CDelete.vue";
 import CNavbar from "./buttons/categoryBtn/CNavbar.vue";
 
-const categorys = ref([]);
+const categories = ref([]);
 const URL_CATEGORY = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
 
 // GET
-const getCategorys = async () => {
+const getCategories = async () => {
     const res = await fetch(URL_CATEGORY);
     if (res.status === 200) {
-        categorys.value = await res.json();
+        categories.value = await res.json();
     } else console.log("error, cannot get data");
 };
 
 onBeforeMount(async () => {
-    await getCategorys();
+    await getCategories();
 });
 //DELETE
-const removeCategorys = async (removeContentID) => {
+const removeCategories = async (removeContentID) => {
     if (confirm("Do you really want to delete")) {
         const res = await fetch(URL_CATEGORY + "/" + removeContentID, {
             method: "DELETE",
         });
         if (res.status === 200) {
-            categorys.value = categorys.value.filter(
-                (categorys) => categorys.id !== removeContentID
+            categories.value = categories.value.filter(
+                (categories) => categories.id !== removeContentID
             );
-            console.log("deleted successfullly");
+            console.log("deleted successfully");
         } else console.log("error, cannot delete");
     }
 };
 
-// EDIT
-const modifyCategorys = async (newid, newName, newDesc, newDuration) => {
-    const res = await fetch(URL_CATEGORY + "/" + newid, {
+// PUT
+const modifyCategories = async (newId, newName, newDesc, newDuration) => {
+    const res = await fetch(URL_CATEGORY + "/" + newId, {
         method: "PUT",
         headers: {
             "content-type": "application/json",
@@ -68,7 +68,7 @@ const moreDetail = (curbookingId) => {
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="contents in categorys" :key="contents.id">
+                <tr v-for="contents in categories" :key="contents.id">
                     <td class="p-10 text-xl">
                         <div class="box-element break-words">
                             {{ contents.eventCategoryName }}
@@ -100,10 +100,10 @@ const moreDetail = (curbookingId) => {
                             <CEdit
                                 @moreDetail="moreDetail(contents)"
                                 :detail="currentDetail"
-                                @editDetail="modifyCategorys"
+                                @editDetail="modifyCategories"
                             />
 
-                            <CDelete @delete="removeCategorys(contents.id)" />
+                            <CDelete @delete="removeCategories(contents.id)" />
                         </div>
                     </td>
                 </tr>
