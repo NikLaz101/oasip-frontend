@@ -4,13 +4,12 @@ import CEdit from "./buttons/categoryBtn/CEdit.vue";
 import CDelete from "./buttons/categoryBtn/CDelete.vue";
 import CNavbar from "./buttons/categoryBtn/CNavbar.vue";
 
-const error = ref({});
 const categorys = ref([]);
-const URL = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
+const URL_CATEGORY = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
 
 // GET
 const getCategorys = async () => {
-    const res = await fetch(URL);
+    const res = await fetch(URL_CATEGORY);
     if (res.status === 200) {
         categorys.value = await res.json();
     } else console.log("error, cannot get data");
@@ -22,7 +21,7 @@ onBeforeMount(async () => {
 //DELETE
 const removeCategorys = async (removeContentID) => {
     if (confirm("Do you really want to delete")) {
-        const res = await fetch(URL + "/" + removeContentID, {
+        const res = await fetch(URL_CATEGORY + "/" + removeContentID, {
             method: "DELETE",
         });
         if (res.status === 200) {
@@ -35,38 +34,28 @@ const removeCategorys = async (removeContentID) => {
 };
 
 // EDIT
-const modifyCategorys = async (newid, newName, newDesc) => {
-    const res = await fetch(URL + "/" + newid, {
+const modifyCategorys = async (newid, newName, newDesc, newDuration) => {
+    const res = await fetch(URL_CATEGORY + "/" + newid, {
         method: "PUT",
         headers: {
             "content-type": "application/json",
         },
         body: JSON.stringify({
             eventCategoryName: newName,
-            eventCategoryDescription: newDesc,
+            eventCategoryDescription: newDesc == null ? null : newDesc.trim(),
+            eventDuration: newDuration,
         }),
     });
-    if (res.status === 201) {
-        getCategorys();
-        const modify = await res.json();
-        categorys.value = categorys.value.map((categorys) =>
-            categorys.id === modify.id
-                ? {
-                      ...categorys,
-                      eventCategoryName: newName,
-                      eventCategoryDescription: newDesc,
-                  }
-                : categorys
-        );
+    if (res.status === 200) {
+        getSchedules();
         console.log("edited successfully");
     } else console.log("error, cannot edit");
 };
 
 const currentDetail = ref({});
 const moreDetail = (curbookingId) => {
-  currentDetail.value = curbookingId;
+    currentDetail.value = curbookingId;
 };
-
 </script>
 
 <template>
@@ -86,8 +75,20 @@ const moreDetail = (curbookingId) => {
                         </div>
                     </td>
                     <td class="p-10 text-xl">
-                        <div class="pt-2">
+                        <div
+                            v-if="
+                                contents.eventCategoryDescription != null &&
+                                contents.eventCategoryDescription.trim() != ''
+                            "
+                            class="pt-2"
+                        >
                             {{ contents.eventCategoryDescription }}
+                        </div>
+                        <div
+                            v-else-if="typeof contents.eventCategoryDescription"
+                            class="auto-fill text-xl font-medium"
+                        >
+                            No message
                         </div>
                     </td>
                     <td class="p-10 text-xl">
@@ -97,7 +98,7 @@ const moreDetail = (curbookingId) => {
                     <td>
                         <div id="showDetail">
                             <CEdit
-                            @moreDetail="moreDetail(contents)"
+                                @moreDetail="moreDetail(contents)"
                                 :detail="currentDetail"
                                 @editDetail="modifyCategorys"
                             />
@@ -166,5 +167,8 @@ textarea {
     overflow: auto;
     background-color: rgb(0, 0, 0);
     background-color: rgba(0, 0, 0, 0.4);
+}
+.auto-fill {
+    color: #8f8f8f;
 }
 </style>

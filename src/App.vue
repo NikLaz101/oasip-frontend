@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div id="homepage">
+  <div class="text-white">
     <router-view></router-view>
   </div>
 </template>

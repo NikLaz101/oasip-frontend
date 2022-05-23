@@ -1,6 +1,5 @@
 <script setup>
 import Schedules from "../components/Schedules.vue";
-import Category from "../components/Category.vue"
 </script>
 
 <template>

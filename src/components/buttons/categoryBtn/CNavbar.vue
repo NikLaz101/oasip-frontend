@@ -12,9 +12,6 @@ const getSchedules = async () => {
   const res = await fetch(URL_EVENT);
   if (res.status === 200) {
     schedules.value = await res.json();
-    appRouter.push({
-			name: "contents",
-		});
   } else console.log("error, cannot get data");
 };
 
@@ -22,21 +19,15 @@ onBeforeMount(async () => {
     await getSchedules();
 });
 
-const scheduleRouter = () =>
-    appRouter.push({
-        name: "contents",
-    });
-const categoryRouter = () =>
-    appRouter.push({
-        name: "categoryContents",
-    });
+const scheduleRouter = () =>appRouter.push({name: "contents"});
+const categoryRouter = () => appRouter.push({ name: "categoryContents"});
 </script>
 
 <template>
     <th class="text-xl font-extrabold px-10">
         <div class="dropdown dropdown-hover">
             <button tabindex="0" class="m-1 text-xl font-extrabold">
-                CATEGORY
+                <p>  CATEGORY <i class="arrow down ml-3 mb-1"></i></p>
             </button>
             <ul
                 tabindex="0"
