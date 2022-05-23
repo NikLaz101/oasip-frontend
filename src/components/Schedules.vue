@@ -1,16 +1,16 @@
 <script setup>
 import { ref, onBeforeMount } from "vue";
 import moment from "moment";
-import Detail from "./buttons/Detail.vue";
-import Create from "./buttons/Create.vue";
-import Delete from "./buttons/Delete.vue";
-import Navbar from "./buttons/Navbar.vue";
+import Detail from "./buttons/scheduleBtn/Detail.vue";
+import Create from "./buttons/scheduleBtn/Create.vue";
+import Delete from "./buttons/scheduleBtn/Delete.vue";
+import Navbar from "./buttons/scheduleBtn/Navbar.vue";
 
 const schedules = ref([]);
 
 // GET
 const getSchedules = async () => {
-  const res = await fetch(import.meta.env.VITE_BASE_URL + "api/event");
+  const res = await fetch(import.meta.env.VITE_EVENT_URL);
   if (res.status === 200) {
     schedules.value = await res.json();
   } else console.log("error, cannot get data");
@@ -23,12 +23,9 @@ onBeforeMount(async () => {
 //DELETE
 const removeSchedules = async (removeContentID) => {
   if (confirm("Do you really want to delete")) {
-    const res = await fetch(
-      import.meta.env.VITE_BASE_URL + "api/event/" + removeContentID,
-      {
-        method: "DELETE",
-      }
-    );
+    const res = await fetch(import.meta.env.VITE_EVENT_URL + "/" + removeContentID, {
+      method: "DELETE",
+    });
     if (res.status === 200) {
       schedules.value = schedules.value.filter(
         (schedules) => schedules.id !== removeContentID
@@ -38,25 +35,26 @@ const removeSchedules = async (removeContentID) => {
   }
 };
 
-// EDIT
-const modifySchedules = async (newid, newtime, newnotes) => {
-  const res = await fetch(
-    import.meta.env.VITE_BASE_URL + "api/event/" + newid,
-    {
-      method: "PUT",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-      eventStartTime: newtime + "+07:00",
-      eventNotes: newnotes.trim() == "" ? null : newnotes.trim(),
-      }),
-    }
-  );
+// PUT
+const modifySchedules = async (newId, newTime, newNotes, isOverlap) => {
+  console.log(isOverlap);
+  if(isOverlap){
+  }else{
+  const res = await fetch(import.meta.env.VITE_EVENT_URL + "/" + newId, {
+    method: "PUT",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      eventStartTime: newTime + "+07:00",
+      eventNotes: newNotes == null ? null : newNotes.trim(),
+    }),
+  });
   if (res.status === 200) {
     getSchedules();
     console.log("edited successfully");
   } else console.log("error, cannot edit");
+}
 };
 
 // POST
@@ -66,44 +64,49 @@ const createNewSchedules = async (
   selectedId,
   Time,
   Duration,
-  Notes
+  Notes,
+  isOverlap
 ) => {
-  const res = await fetch(import.meta.env.VITE_BASE_URL + "api/event", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      bookingName: Name,
-      bookingEmail: Email,
-      categoryId: selectedId,
-      eventStartTime: Time + "+07:00",
-      eventDuration: Duration,
-      eventNotes: Notes.trim() == "" ? null : Notes.trim(),
-    }),
-  });
-  if (res.status === 201) {
-    getSchedules();
-  } else console.log("error, cannot be added");
-};
-const currentDetail = ref({});
-const moreDetail = (curbookingId) => {
-  currentDetail.value = curbookingId;
-  currentDetail.value.eventStartTime = moment(
-    currentDetail.value.eventStartTime
-  ).format("YYYY-MM-DDTHH:mm:ss");
-  if (currentDetail.value.eventNotes === "") {
-    currentDetail.value.eventNotes = null;
+  console.log(isOverlap);
+  if (isOverlap) {
+  } else {
+    const res = await fetch(import.meta.env.VITE_EVENT_URL, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        bookingName: Name,
+        bookingEmail: Email,
+        categoryId: selectedId,
+        eventStartTime: Time + "+07:00",
+        eventDuration: Duration,
+        eventNotes: Notes.trim() == "" ? null : Notes.trim(),
+      }),
+    });
+    if (res.status === 201) {
+      getSchedules();
+    } else console.log("error, cannot be added");
   }
 };
 
+const currentDetail = ref({});
+const data = ref("");
+
+const moreDetail = (curbookingId) => {
+  currentDetail.value = curbookingId;
+  data.value = curbookingId.eventNotes;
+  currentDetail.value.eventStartTime = moment(
+    currentDetail.value.eventStartTime
+  ).format("YYYY-MM-DDTHH:mm:ss");
+  getSchedules();
+};
+
 const clinic = ref();
-const getClinic = async (e) => {
-  if (e !== 0) {
+const getClinic = async (id) => {
+  if (id !== 0) {
     menu.value = undefined;
-    const res = await fetch(
-      import.meta.env.VITE_BASE_URL + "api/category/" + e
-    );
+    const res = await fetch(import.meta.env.VITE_CATEGORY_URL + "/" + id);
     if (res.status === 200) {
       clinic.value = await res.json();
       console.log(clinic.value);
@@ -116,7 +119,7 @@ const getClinic = async (e) => {
 
 const menu = ref();
 const getUpcoming = async () => {
-  const res = await fetch( import.meta.env.VITE_BASE_URL + "api/event/"+ "upcoming");
+  const res = await fetch(import.meta.env.VITE_EVENT_URL + "/" + "upcoming");
   if (res.status === 200) {
     menu.value = await res.json();
     console.log(menu.value);
@@ -124,7 +127,7 @@ const getUpcoming = async () => {
 };
 
 const getPast = async () => {
-  const res = await fetch( import.meta.env.VITE_BASE_URL + "api/event/" + "past");
+  const res = await fetch(import.meta.env.VITE_EVENT_URL + "/" + "past");
   if (res.status === 200) {
     menu.value = await res.json();
     console.log(menu.value);
@@ -139,21 +142,20 @@ const getPast = async () => {
         <tr>
           <Navbar @option="getClinic" @upcoming="getUpcoming" @past="getPast" />
           <th>
-            <Create @create="createNewSchedules" />
+            <Create :detail="schedules" @create="createNewSchedules" />
           </th>
         </tr>
       </thead>
       <div
-        id="Noevent"
-        v-if="schedules && clinic < 1 || menu < 1"
-        class="text-5xl pt-20"
+        v-if="schedules < 1"
+        class="no-event text-5xl pt-20"
         v-cloak
       >
         No Scheduled Events
       </div>
       <tbody v-else>
         <tr
-          v-if="clinic == undefined && menu == undefined" 
+          v-if="clinic == undefined && menu == undefined"
           v-for="contents in schedules"
           :key="contents.id"
         >
@@ -181,6 +183,8 @@ const getPast = async () => {
               <Detail
                 @moreDetail="moreDetail(contents)"
                 :detail="currentDetail"
+                :data="data"
+                :event="schedules"
                 @editDetail="modifySchedules"
               />
 
@@ -213,6 +217,7 @@ const getPast = async () => {
               <Detail
                 @moreDetail="moreDetail(contents)"
                 :detail="currentDetail"
+                :data="data"
                 @editDetail="modifySchedules"
               />
 
@@ -245,6 +250,7 @@ const getPast = async () => {
               <Detail
                 @moreDetail="moreDetail(contents)"
                 :detail="currentDetail"
+                :data="data"
                 @editDetail="modifySchedules"
               />
 
@@ -262,11 +268,7 @@ const getPast = async () => {
   display: none;
 }
 
-.textarea {
-  @apply textarea-ghost focus:outline-none;
-}
-
-#Noevent {
+.no-event {
   text-align: center;
   width: 100%;
   position: absolute;

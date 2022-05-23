@@ -3,11 +3,19 @@ import moment from "moment";
 import { ref } from "vue";
 
 defineEmits(["moreDetail", "editDetail"]);
-defineProps({
+const props = defineProps({
   detail: {
     type: Object,
     require: true,
   },
+  data: {
+    type: String,
+    require:true,
+  },
+  event: {
+      type: Array,
+      require:true,
+  }
 });
 
 const edit = ref(false);
@@ -21,6 +29,33 @@ var realTime = () => {
   setInterval(updateTime, 1000);
 };
 realTime();
+
+const isOverlap = ref(false);
+const error = ref(false);
+const overlap = () => {
+  var startTime = moment(props.detail.eventStartTime).format();
+  var endTime = moment(props.detail.eventStartTime).add(props.detail.eventDuration, "minutes").format();
+  props.event.forEach((e) => {
+    if (e.categoryId === props.detail.categoryId && e.id !== props.detail.id) {
+      var startTime_2 = e.eventStartTime;
+      var endTime_2 = moment(e.eventStartTime)
+        .add(e.eventDuration, "minute")
+        .format();
+      if (checkOverlap(startTime, endTime, startTime_2, endTime_2)) {
+        isOverlap.value = true;
+        error.value = true;
+        console.log("Overlap");
+      }
+    }
+  });
+};
+
+const checkOverlap = (start_1, end_1, start_2, end_2) => {
+  if (start_1 <= start_2 && start_2 <= end_1) return true;
+  if (start_1 <= end_2 && end_2 <= end_1) return true;
+  if (start_2 < start_1 && end_1 < end_2) return true;
+  return false;
+};
 </script>
 
 <template>
@@ -29,6 +64,7 @@ realTime();
     @click="
       $emit('moreDetail');
       edit = false;
+      error = false;
       isModalOn = !isModalOn;
     "
   >
@@ -81,9 +117,13 @@ realTime();
                 'editDetail',
                 detail.id,
                 detail.eventStartTime,
-                detail.eventNotes
+                detail.eventNotes,
+                isOverlap
               );
-              edit = !edit;
+              (isOverlap == true
+              ? edit
+              : ( edit = !edit));
+              isOverlap = false;
             "
           >
             <div
@@ -103,9 +143,12 @@ realTime();
                 v-model="detail.eventStartTime"
                 :min="date"
                 step="any"
-                class="text-black"
+                class="text-black p-1 rounded-md"
                 required
               />
+               <p class="text-red-600" v-show="error">
+                Error!!! this start time is overlapped other event.
+              </p>
             </div>
             <div class="text-2xl font-bold grid justify-center py-2">
               <div>
@@ -119,7 +162,9 @@ realTime();
               </p>
               <div
                 v-show="!edit"
-                v-if="detail.eventNotes != null && detail.eventNotes.trim() != ''"
+                v-if="
+                  detail.eventNotes != null && detail.eventNotes.trim() != ''
+                "
                 class="text-base font-medium py-2"
               >
                 {{ detail.eventNotes }}
@@ -127,22 +172,29 @@ realTime();
               <div
                 v-show="!edit"
                 v-else-if="typeof detail.eventNotes"
-                class="text-base font-medium opacity-50 py-2"
+                class="text-base font-medium auto-fill py-2"
               >
-                <b>No messages</b>
+                No messages
               </div>
               <div v-show="edit" class="py-2">
                 <textarea
                   cols="50"
                   rows="3"
-                  v-model="detail.eventNotes"
-                  class="text-black p-2"
+                  v-model="data"
+                  class="text-black p-2 rounded-lg"
                 ></textarea>
               </div>
             </div>
             <div class="flex justify-end">
-              <input class="btn m-2" v-show="edit" type="submit" value="OK" />
-              <input class="btn m-2" v-show="edit" type="button" value="Cancel" @click="edit = !edit" />
+              <input class="btn m-2" v-show="edit" type="submit" value="OK" @click="detail.eventNotes = data; overlap()" />
+              <input
+                class="btn m-2"
+                v-show="edit"
+                type="button"
+                value="Cancel"
+                @click="edit = !edit
+                "
+              />
             </div>
           </form>
         </div>
@@ -181,5 +233,8 @@ realTime();
   color: rgb(82, 80, 80);
   text-decoration: none;
   cursor: pointer;
+}
+.auto-fill {
+    color: #8f8f8f;
 }
 </style>
