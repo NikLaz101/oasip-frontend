@@ -7,8 +7,8 @@ import Delete from "./buttons/scheduleBtn/Delete.vue";
 import Navbar from "./buttons/scheduleBtn/Navbar.vue";
 
 const schedules = ref([]);
-const URL_EVENT = "http://intproj21.sit.kmutt.ac.th/at1/api/event"
-const URL_CATEGORY = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
+const URL_EVENT = "http://intproj21.sit.kmutt.ac.th/at1/api/events"
+const URL_CATEGORY = "http://intproj21.sit.kmutt.ac.th/at1/api/categories";
 
 // GET
 const getSchedules = async () => {
