@@ -5,7 +5,7 @@ import CDelete from "./buttons/categoryBtn/CDelete.vue";
 import CNavbar from "./buttons/categoryBtn/CNavbar.vue";
 
 const categorys = ref([]);
-const URL = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
+const URL = "http://intproj21.sit.kmutt.ac.th/at1/api/categories";
 
 // GET
 const getCategorys = async () => {

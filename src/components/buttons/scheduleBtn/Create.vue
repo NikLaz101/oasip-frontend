@@ -10,7 +10,7 @@ const props = defineProps({
 });
 const isModalOn = ref(false);
 const category = ref([]);
-const URL = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
+const URL = "http://intproj21.sit.kmutt.ac.th/at1/api/categories";
 
 // GET
 const getCategories = async () => {

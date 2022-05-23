@@ -7,8 +7,8 @@ import Delete from "./buttons/scheduleBtn/Delete.vue";
 import Navbar from "./buttons/scheduleBtn/Navbar.vue";
 
 const schedules = ref([]);
-const URL_EVENT = "http://intproj21.sit.kmutt.ac.th/at1/api/event"
-const URL_CATEGORY = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
+const URL_EVENT = "http://intproj21.sit.kmutt.ac.th/at1/api/events"
+const URL_CATEGORY = "http://intproj21.sit.kmutt.ac.th/at1/api/categories";
 
 // GET
 const getSchedules = async () => {
@@ -107,7 +107,7 @@ const clinic = ref();
 const getClinic = async (e) => {
   if (e !== 0) {
     menu.value = undefined;
-    const res = await fetch(URL_CATEGORY + "/" + e);
+    const res = await fetch(URL_CATEGORY + "/" + e + '/events');
     if (res.status === 200) {
       clinic.value = await res.json();
       console.log(clinic.value);

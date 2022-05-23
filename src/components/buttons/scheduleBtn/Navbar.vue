@@ -5,7 +5,7 @@ defineEmits(["option",'upcoming','past']);
 
 const category = ref([]);
 const appRouter = useRouter();
-const URL_CATEGORY = "http://intproj21.sit.kmutt.ac.th/at1/api/category";
+const URL_CATEGORY = "http://intproj21.sit.kmutt.ac.th/at1/api/categories";
 
 // GET
 const getCategories = async () => {
