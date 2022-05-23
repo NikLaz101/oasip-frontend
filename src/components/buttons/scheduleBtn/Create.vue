@@ -1,83 +1,267 @@
 <script setup>
-import { onBeforeMount, ref } from "vue";
-import { useRouter } from "vue-router";
-defineEmits(["option",'upcoming','past']);
+import { ref, onBeforeMount } from "vue";
+import moment from "moment";
+defineEmits(["create"]);
+const props = defineProps({
+  detail: {
+    type: Array,
+    require: true,
+  },
+});
+const isModalOn = ref(false);
 const category = ref([]);
-const appRouter = useRouter();
+
 // GET
 const getCategories = async () => {
-    const res = await fetch(import.meta.env.VITE_CATEGORY_URL)
-    if (res.status === 200) {
-        category.value = await res.json();
-    } else console.log("error, cannot get data");
+  const res = await fetch(import.meta.env.VITE_CATEGORY_URL);
+  if (res.status === 200) {
+    category.value = await res.json();
+  } else console.log("error, cannot get data");
 };
+
 onBeforeMount(async () => {
-    await getCategories();
+  await getCategories();
 });
-const scheduleRouter = () => appRouter.push({ name: "scheduleContents",});
-const categoryRouter = () => appRouter.push({ name: "categoryContents",});
+
+const Name = ref('');
+const Email = ref('');
+const Selected = ref();
+const Time = ref();
+const Duration = ref();
+const Notes = ref("");
+const selectedId = ref();
+
+const isOverlap = ref(false);
+const error = ref(false);
+const overlap = () => {
+  var startTime = moment(Time.value).format();
+  var endTime = moment(Time.value).add(Duration.value, "minutes").format();
+  props.detail.forEach((e) => {
+    if (e.categoryId === selectedId.value) {
+      var startTime_2 = e.eventStartTime;
+      var endTime_2 = moment(e.eventStartTime)
+        .add(e.eventDuration, "minute")
+        .format();
+      if (checkOverlap(startTime, endTime, startTime_2, endTime_2)) {
+        isOverlap.value = true;
+        error.value = true;
+        console.log("Overlap");
+      }
+    }
+  });
+};
+
+const checkOverlap = (start_1, end_1, start_2, end_2) => {
+  if (start_1 <= start_2 && start_2 <= end_1) return true;
+  if (start_1 <= end_2 && end_2 <= end_1) return true;
+  if (start_2 < start_1 && end_1 < end_2) return true;
+  return false;
+};
+
+const newDuration = () => {
+  category.value.forEach((category) => {
+    if (category.eventCategoryName === Selected.value) {
+      Duration.value = category.eventDuration;
+      selectedId.value = category.id;
+    }
+  });
+};
+
+const date = ref();
+function updateTime() {
+  date.value = moment().format("YYYY-MM-DDTHH:mm:ss");
+}
+const realTime = () => {
+  setInterval(updateTime, 1000);
+};
+realTime();
 </script>
 
 <template>
-    <th class="text-xl font-extrabold px-10">
-        <div class="dropdown dropdown-hover">
-            <button tabindex="0" class="m-1 text-xl font-extrabold">
-              <p>NAME<i class="arrow down ml-3 mb-1"></i></p>
-            </button>
-            <ul
-                tabindex="0"
-                class="dropdown-content menu p-2 bg-base-300 shadow rounded-box w-64"
-            >
-                <li>
-                    <button class="text-xl" @click.left="scheduleRouter">
-                        Name
-                    </button>
-                </li>
-                <li>
-                    <button class="text-xl" @click.left="categoryRouter">
-                        Category
-                    </button>
-                </li>
-            </ul>
+  <div id="create">
+    <button
+      class="btn text-xl font-extrabold px-10"
+      @click="
+        Name = '';
+        Email = '';
+        Selected = undefined;
+        Time = undefined;
+        Duration = undefined;
+        Notes = '';
+        error = false;
+        isModalOn = !isModalOn;
+      "
+    >
+      CREATE
+    </button>
+    <div v-show="isModalOn" class="modal-show flex justify-center">
+      <div class="modal-content bg-base-100 rounded-2xl">
+        <div class="flex justify-end">
+          <button class="close" @click="isModalOn = !isModalOn">x</button>
         </div>
-    </th>
-   <th class="px-10">
-    <div class="dropdown dropdown-hover">
-      <button tabindex="0" class="m-1 text-xl font-extrabold"><p>CLINIC<i class="arrow down ml-3 mb-1"></i></p></button>
-      <ul
-        tabindex="0"
-        class="dropdown-content menu p-2 bg-base-300 shadow rounded-box w-64"
-      >
-      <li><button @click="$emit('option',0)" class="text-xl">All Clinic</button></li>
-        <li v-for="content in category">
-          <button @click="$emit('option',content.id)" class="text-xl">{{ content.eventCategoryName.substring(0,content.eventCategoryName.length - 7) }} </button>
-        </li>
-      </ul>
+        <!-- form -->
+        <form
+          method="post"
+          @submit.prevent="
+            $emit(
+              'create',
+              Name,
+              Email,
+              selectedId,
+              Time,
+              Duration,
+              Notes,
+              isOverlap
+            );
+            Name == '' ||
+            Email == '' ||
+            Selected == undefined ||
+            Time == undefined ||
+            isOverlap == true
+              ? isModalOn
+              : (isModalOn = !isModalOn);
+            isOverlap = false;
+          "
+        >
+          <!-- Name -->
+          <div class="grid justify-center">
+            <label for="name">Name <span class="auto-fill">({{ Name.length }}/100)</span></label>
+            <div class="py-3">
+              <input
+                type="text"
+                v-model="Name"
+                maxlength="100"
+                class="form-element bg-base-100 italic"
+                placeholder="Your name"
+                required
+              />
+            </div>
+            <!-- Email -->
+            <label for="Email">Email  <span class="auto-fill">({{ Email.length }}/50)</span></label>
+            <div class="py-3">
+              <input
+                type="email"
+                v-model="Email"
+                maxlength="50"
+                class="form-element bg-base-100 border-b-2 italic"
+                placeholder="Your email"
+                required
+              />
+            </div>
+            <!-- Clinic -->
+            <label for="clinics">Clinic</label>
+            <div class="py-3">
+              <select
+                name="clinics"
+                class="form-element bg-base-100 border-b-2 italic"
+                @change="newDuration"
+                v-model="Selected"
+                required
+              >
+                <option
+                  v-for="categories in category"
+                  :value="categories.eventCategoryName"
+                >
+                  {{ categories.eventCategoryName }}
+                </option>
+              </select>
+            </div>
+            <!-- Date -->
+            <label for="Date">Date</label>
+            <div class="py-3">
+              <input
+                type="datetime-local"
+                v-model="Time"
+                :min="date"
+                step="any"
+                class="text-black form-element"
+                required
+              />
+              <p class="text-red-600" v-show="error">
+                Error this start time is overlaped other event!!!
+              </p>
+            </div>
+            <!-- Duration -->
+            <label for="Duration">Duration (minutes)</label>
+            <div class="py-3">
+              <input
+                class="bg-base-100 border-b-2 italic focus:outline-none pointer-events-none form-element"
+                readonly
+                type="text"
+                v-model="Duration"
+                placeholder="Select your clinic"
+              />
+            </div>
+            <!-- Note -->
+            <label for="Note">Note  <span class="auto-fill">({{ Notes.length }}/500)</span></label>
+            <div class="py-3">
+              <textarea
+                cols="50"
+                rows="2"
+                v-model="Notes"
+                maxlength="500"
+                class="bg-base-100 border-b-2 italic p-2 form-element"
+                placeholder="Your message"
+              ></textarea>
+            </div>
+          </div>
+          <div class="flex justify-end pt-2">
+            <!-- Create -->
+            <input
+              class="btn"
+              type="submit"
+              value="Create"
+              @click="overlap()"
+            />
+          </div>
+        </form>
+      </div>
     </div>
-  </th>
-<th class="px-10">
-    <div class="dropdown dropdown-hover">
-      <button tabindex="0" class="m-1 text-xl font-extrabold"><p>DATE<i class="arrow down ml-3 mb-1"></i></p></button>
-      <ul
-        tabindex="0"
-        class="dropdown-content menu p-2 bg-base-300 shadow rounded-box w-36"
-      >
-      <li><button @click="$emit('upcoming')" class="text-xl">Upcoming</button></li>
-      <li><button @click="$emit('past')" class="text-xl">Past</button></li>
-      </ul>
-    </div>
-  </th>  <th class="text-xl font-extrabold px-10">DURATION</th>
+  </div>
 </template>
 
-<style scoped>
-.arrow {
-  border: solid rgb(255, 255, 255);
-  border-width: 0 4px 4px 0;
-  display: inline-block;
-  padding: 3px;
+<style>
+.form-element {
+  border-color: #494a7d;
+  border-radius: 5px;
+  padding: 10px;
+  border-width: 2px;
+  width: 100%;
 }
-.down {
-  transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
+.form-element:focus {
+  outline: none !important;
+  border: 2px solid #fcc302;
+}
+
+.modal-content {
+  margin: auto;
+  padding: 20px;
+  width: 500px;
+}
+.modal-show {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(32, 32, 32);
+  background-color: rgba(73, 73, 73, 0.4);
+}
+.close {
+  color: #aaaaaa;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: rgb(82, 80, 80);
+  text-decoration: none;
+  cursor: pointer;
+}
+.auto-fill {
+  color: #8f8f8f;
 }
 </style>
