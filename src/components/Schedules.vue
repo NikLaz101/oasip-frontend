@@ -19,7 +19,6 @@ const getSchedules = async () => {
 onBeforeMount(async () => {
   await getSchedules();
 });
-
 //DELETE
 const removeSchedules = async (removeContentID) => {
   if (confirm("Do you really want to delete")) {
@@ -108,7 +107,7 @@ const clinic = ref();
 const getClinic = async (id) => {
   if (id !== 0) {
     menu.value = undefined;
-    const res = await fetch(import.meta.env.VITE_CATEGORY_URL + "/" + id +'/events');
+    const res = await fetch(import.meta.env.VITE_CATEGORY_URL + "/" + id + "/events");
     if (res.status === 200) {
       clinic.value = await res.json();
       console.log(clinic.value);
@@ -121,7 +120,7 @@ const getClinic = async (id) => {
 
 const menu = ref();
 const getUpcoming = async () => {
-  const res = await fetch(import.meta.env.VITE_EVENT_URL + "/" + "upcoming");
+  const res = await fetch(import.meta.env.VITE_EVENT_URL + "/upcoming");
   if (res.status === 200) {
     menu.value = await res.json();
     console.log(menu.value);
@@ -129,7 +128,7 @@ const getUpcoming = async () => {
 };
 
 const getPast = async () => {
-  const res = await fetch(import.meta.env.VITE_EVENT_URL + "/" + "past");
+  const res = await fetch(import.meta.env.VITE_EVENT_URL + "/past");
   if (res.status === 200) {
     menu.value = await res.json();
     console.log(menu.value);
@@ -270,25 +269,30 @@ const getPast = async () => {
 [v-cloak] {
   display: none;
 }
+
 .textarea {
   @apply textarea-ghost focus:outline-none;
 }
+
 #Noevent {
   text-align: center;
   width: 100%;
   position: absolute;
   z-index: -1;
 }
+
 table {
   text-align: left;
   position: relative;
   border-collapse: collapse;
   border-radius: 6px;
 }
+
 input,
 textarea {
   color: rgb(0 0 0);
 }
+
 .table-header {
   position: sticky;
   top: 0;
@@ -325,3 +329,4 @@ textarea {
   background-color: rgba(0, 0, 0, 0.4);
 }
 </style>
+
