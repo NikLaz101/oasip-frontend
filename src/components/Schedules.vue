@@ -51,6 +51,8 @@ const modifySchedules = async (newId, newTime, newNotes, isOverlap) => {
     }),
   });
   if (res.status === 200) {
+    const edit = await res.json();
+    data.value = edit.eventNotes;
     getSchedules();
     console.log("edited successfully");
   } else console.log("error, cannot edit");
