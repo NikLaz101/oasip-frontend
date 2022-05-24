@@ -45,7 +45,7 @@ const modifySchedules = async (newId, newTime, newNotes, isOverlap) => {
       "content-type": "application/json",
     },
     body: JSON.stringify({
-      eventStartTime: newTime + "+07:00",
+      eventStartTime: moment(newTime).utcOffset('+07:00'),
       eventNotes: newNotes == null ? null : newNotes.trim(),
     }),
   });
@@ -80,7 +80,7 @@ const createNewSchedules = async (
         bookingName: Name,
         bookingEmail: Email,
         categoryId: selectedId,
-        eventStartTime: Time + "+07:00",
+        eventStartTime: moment(Time).utcOffset('+07:00'),
         eventDuration: Duration,
         eventNotes: Notes.trim() == "" ? null : Notes.trim(),
       }),
@@ -174,7 +174,7 @@ const getPast = async () => {
 
           <td class="p-10 text-xl">
             {{
-              moment(contents.eventStartTime).format("D MMMM YYYY, h:mm:ss A")
+              moment(contents.eventStartTime).local().format("D MMMM YYYY, h:mm:ss A")
             }}
           </td>
 
@@ -208,7 +208,7 @@ const getPast = async () => {
 
           <td class="p-10 text-xl">
             {{
-              moment(contents.eventStartTime).format("D MMMM YYYY, h:mm:ss A")
+              moment(contents.eventStartTime).local().format("D MMMM YYYY, h:mm:ss A")
             }}
           </td>
 
@@ -241,7 +241,7 @@ const getPast = async () => {
 
           <td class="p-10 text-xl">
             {{
-              moment(contents.eventStartTime).format("D MMMM YYYY, h:mm:ss A")
+              moment(contents.eventStartTime).local().format("D MMMM YYYY, h:mm:ss A")
             }}
           </td>
 

@@ -131,7 +131,7 @@ const checkOverlap = (start_1, end_1, start_2, end_2) => {
               class="text-base font-medium grid justify-center py-2"
             >
               {{
-                moment(detail.eventStartTime).format("D MMMM YYYY, h:mm:ss A")
+                moment(detail.eventStartTime).local().format("D MMMM YYYY, h:mm:ss A")
               }}
             </div>
             <div
