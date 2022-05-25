@@ -10,11 +10,10 @@ const props = defineProps({
 });
 const isModalOn = ref(false);
 const category = ref([]);
-const URL = "http://intproj21.sit.kmutt.ac.th/at1/api/categories";
 
 // GET
 const getCategories = async () => {
-  const res = await fetch(URL);
+  const res = await fetch(import.meta.env.VITE_CATEGORY_URL);
   if (res.status === 200) {
     category.value = await res.json();
   } else console.log("error, cannot get data");
@@ -129,11 +128,10 @@ realTime();
             <label for="name">Name <span class="auto-fill">({{ Name.length }}/100)</span></label>
             <div class="py-3">
               <input
-                id="message"
                 type="text"
                 v-model="Name"
                 maxlength="100"
-                class="bg-base-100 italic"
+                class="form-element bg-base-100 italic"
                 placeholder="Your name"
                 required
               />
@@ -142,11 +140,10 @@ realTime();
             <label for="Email">Email  <span class="auto-fill">({{ Email.length }}/50)</span></label>
             <div class="py-3">
               <input
-                id="message"
                 type="email"
                 v-model="Email"
                 maxlength="50"
-                class="bg-base-100 border-b-2 italic"
+                class="form-element bg-base-100 border-b-2 italic"
                 placeholder="Your email"
                 required
               />
@@ -155,9 +152,8 @@ realTime();
             <label for="clinics">Clinic</label>
             <div class="py-3">
               <select
-                id="message"
                 name="clinics"
-                class="bg-base-100 border-b-2 italic"
+                class="form-element bg-base-100 border-b-2 italic"
                 @change="newDuration"
                 v-model="Selected"
                 required
@@ -174,12 +170,11 @@ realTime();
             <label for="Date">Date</label>
             <div class="py-3">
               <input
-                id="message"
                 type="datetime-local"
                 v-model="Time"
                 :min="date"
                 step="any"
-                class="text-black"
+                class="text-black form-element"
                 required
               />
               <p class="text-red-600" v-show="error">
@@ -190,8 +185,7 @@ realTime();
             <label for="Duration">Duration (minutes)</label>
             <div class="py-3">
               <input
-                id="message"
-                class="bg-base-100 border-b-2 italic focus:outline-none pointer-events-none"
+                class="bg-base-100 border-b-2 italic focus:outline-none pointer-events-none form-element"
                 readonly
                 type="text"
                 v-model="Duration"
@@ -202,12 +196,11 @@ realTime();
             <label for="Note">Note  <span class="auto-fill">({{ Notes.length }}/500)</span></label>
             <div class="py-3">
               <textarea
-                id="message"
                 cols="50"
                 rows="2"
                 v-model="Notes"
                 maxlength="500"
-                class="bg-base-100 border-b-2 italic p-2"
+                class="bg-base-100 border-b-2 italic p-2 form-element"
                 placeholder="Your message"
               ></textarea>
             </div>
@@ -228,14 +221,14 @@ realTime();
 </template>
 
 <style>
-#message {
+.form-element {
   border-color: #494a7d;
   border-radius: 5px;
   padding: 10px;
   border-width: 2px;
   width: 100%;
 }
-#message:focus {
+.form-element:focus {
   outline: none !important;
   border: 2px solid #fcc302;
 }

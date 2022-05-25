@@ -7,12 +7,10 @@ import Delete from "./buttons/scheduleBtn/Delete.vue";
 import Navbar from "./buttons/scheduleBtn/Navbar.vue";
 
 const schedules = ref([]);
-const URL_EVENT = "http://intproj21.sit.kmutt.ac.th/at1/api/events"
-const URL_CATEGORY = "http://intproj21.sit.kmutt.ac.th/at1/api/categories";
 
 // GET
 const getSchedules = async () => {
-  const res = await fetch(URL_EVENT);
+  const res = await fetch(import.meta.env.VITE_EVENT_URL);
   if (res.status === 200) {
     schedules.value = await res.json();
   } else console.log("error, cannot get data");
@@ -24,7 +22,7 @@ onBeforeMount(async () => {
 //DELETE
 const removeSchedules = async (removeContentID) => {
   if (confirm("Do you really want to delete")) {
-    const res = await fetch(URL_EVENT + "/" + removeContentID, {
+    const res = await fetch(import.meta.env.VITE_EVENT_URL + "/" + removeContentID, {
       method: "DELETE",
     });
     if (res.status === 200) {
@@ -36,22 +34,24 @@ const removeSchedules = async (removeContentID) => {
   }
 };
 
-// EDIT
-const modifySchedules = async (newid, newtime, newnotes, isOverlap) => {
+// PUT
+const modifySchedules = async (newId, newTime, newNotes, isOverlap) => {
   console.log(isOverlap);
   if(isOverlap){
   }else{
-  const res = await fetch(URL_EVENT + "/" + newid, {
+  const res = await fetch(import.meta.env.VITE_EVENT_URL + "/" + newId, {
     method: "PUT",
     headers: {
       "content-type": "application/json",
     },
     body: JSON.stringify({
-      eventStartTime: newtime + "+07:00",
-      eventNotes: newnotes == null ? null : newnotes.trim(),
+      eventStartTime: newTime + "+07:00",
+      eventNotes: newNotes == null ? null : newNotes.trim(),
     }),
   });
   if (res.status === 200) {
+    const edit = await res.json();
+    data.value = edit.eventNotes;
     getSchedules();
     console.log("edited successfully");
   } else console.log("error, cannot edit");
@@ -71,7 +71,7 @@ const createNewSchedules = async (
   console.log(isOverlap);
   if (isOverlap) {
   } else {
-    const res = await fetch(URL_EVENT, {
+    const res = await fetch(import.meta.env.VITE_EVENT_URL, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -104,10 +104,10 @@ const moreDetail = (curbookingId) => {
 };
 
 const clinic = ref();
-const getClinic = async (e) => {
-  if (e !== 0) {
+const getClinic = async (id) => {
+  if (id !== 0) {
     menu.value = undefined;
-    const res = await fetch(URL_CATEGORY + "/" + e + '/events');
+    const res = await fetch(import.meta.env.VITE_CATEGORY_URL + "/" + id + "/events");
     if (res.status === 200) {
       clinic.value = await res.json();
       console.log(clinic.value);
@@ -120,7 +120,7 @@ const getClinic = async (e) => {
 
 const menu = ref();
 const getUpcoming = async () => {
-  const res = await fetch(URL_EVENT + "/" + "upcoming");
+  const res = await fetch(import.meta.env.VITE_EVENT_URL + "/upcoming");
   if (res.status === 200) {
     menu.value = await res.json();
     console.log(menu.value);
@@ -128,7 +128,7 @@ const getUpcoming = async () => {
 };
 
 const getPast = async () => {
-  const res = await fetch(URL_EVENT + "/" + "past");
+  const res = await fetch(import.meta.env.VITE_EVENT_URL + "/past");
   if (res.status === 200) {
     menu.value = await res.json();
     console.log(menu.value);
@@ -329,3 +329,4 @@ textarea {
   background-color: rgba(0, 0, 0, 0.4);
 }
 </style>
+

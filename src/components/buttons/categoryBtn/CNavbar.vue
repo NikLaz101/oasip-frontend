@@ -5,11 +5,10 @@ defineEmits(["option"]);
 
 const schedules = ref([]);
 const appRouter = useRouter();
-const URL_EVENT = "http://intproj21.sit.kmutt.ac.th/at1/api/event";
 
 // GET
 const getSchedules = async () => {
-  const res = await fetch(URL_EVENT);
+  const res = await fetch(import.meta.env.VITE_EVENT_URL);
   if (res.status === 200) {
     schedules.value = await res.json();
   } else console.log("error, cannot get data");
@@ -19,7 +18,7 @@ onBeforeMount(async () => {
     await getSchedules();
 });
 
-const scheduleRouter = () =>appRouter.push({name: "contents"});
+const scheduleRouter = () =>appRouter.push({name: "scheduleContents"});
 const categoryRouter = () => appRouter.push({ name: "categoryContents"});
 </script>
 
@@ -27,7 +26,7 @@ const categoryRouter = () => appRouter.push({ name: "categoryContents"});
     <th class="text-xl font-extrabold px-10">
         <div class="dropdown dropdown-hover">
             <button tabindex="0" class="m-1 text-xl font-extrabold">
-                CATEGORY
+                <p>  CATEGORY <i class="arrow down ml-3 mb-1"></i></p>
             </button>
             <ul
                 tabindex="0"
@@ -46,4 +45,15 @@ const categoryRouter = () => appRouter.push({ name: "categoryContents"});
     <th class="text-xl font-extrabold px-10">DURATION</th>
 </template>
 
-<style></style>
+<style scoped>
+.arrow {
+  border: solid rgb(255, 255, 255);
+  border-width: 0 4px 4px 0;
+  display: inline-block;
+  padding: 3px;
+}
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+</style>

@@ -143,11 +143,11 @@ const checkOverlap = (start_1, end_1, start_2, end_2) => {
                 v-model="detail.eventStartTime"
                 :min="date"
                 step="any"
-                class="text-black"
+                class="text-black p-1 rounded-md"
                 required
               />
                <p class="text-red-600" v-show="error">
-                Error this start time is overlaped other event!!!
+                Error!!! this start time is overlapped other event.
               </p>
             </div>
             <div class="text-2xl font-bold grid justify-center py-2">
@@ -172,7 +172,7 @@ const checkOverlap = (start_1, end_1, start_2, end_2) => {
               <div
                 v-show="!edit"
                 v-else-if="typeof detail.eventNotes"
-                class="text-base font-medium opacity-50 py-2"
+                class="text-base font-medium auto-fill py-2"
               >
                 No messages
               </div>
@@ -180,13 +180,13 @@ const checkOverlap = (start_1, end_1, start_2, end_2) => {
                 <textarea
                   cols="50"
                   rows="3"
-                  v-model="data"
-                  class="text-black p-2"
+                  v-model="props.data"
+                  class="text-black p-2 rounded-lg"
                 ></textarea>
               </div>
             </div>
             <div class="flex justify-end">
-              <input class="btn m-2" v-show="edit" type="submit" value="OK" @click="detail.eventNotes = data; overlap()" />
+              <input class="btn m-2" v-show="edit" type="submit" value="OK" @click="detail.eventNotes = props.data; overlap()" />
               <input
                 class="btn m-2"
                 v-show="edit"
@@ -228,11 +228,13 @@ const checkOverlap = (start_1, end_1, start_2, end_2) => {
   font-size: 28px;
   font-weight: bold;
 }
-
 .close:hover,
 .close:focus {
   color: rgb(82, 80, 80);
   text-decoration: none;
   cursor: pointer;
+}
+.auto-fill {
+    color: #8f8f8f;
 }
 </style>

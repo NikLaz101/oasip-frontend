@@ -2,35 +2,28 @@
 import { onBeforeMount, ref } from "vue";
 import { useRouter } from "vue-router";
 defineEmits(["option",'upcoming','past']);
-
 const category = ref([]);
 const appRouter = useRouter();
-const URL_CATEGORY = "http://intproj21.sit.kmutt.ac.th/at1/api/categories";
 
 // GET
 const getCategories = async () => {
-    const res = await fetch(URL_CATEGORY);
+    const res = await fetch(import.meta.env.VITE_CATEGORY_URL);
     if (res.status === 200) {
         category.value = await res.json();
     } else console.log("error, cannot get data");
 };
-
 onBeforeMount(async () => {
     await getCategories();
 });
-
-const scheduleRouter = () => appRouter.push({ name: "contents",});
-
-
+const scheduleRouter = () => appRouter.push({ name: "scheduleContents",});
 const categoryRouter = () => appRouter.push({ name: "categoryContents",});
-
 </script>
 
 <template>
     <th class="text-xl font-extrabold px-10">
         <div class="dropdown dropdown-hover">
             <button tabindex="0" class="m-1 text-xl font-extrabold">
-                NAME 
+              <p>NAME<i class="arrow down ml-3 mb-1"></i></p>
             </button>
             <ul
                 tabindex="0"
@@ -50,11 +43,11 @@ const categoryRouter = () => appRouter.push({ name: "categoryContents",});
         </div>
     </th>
    <th class="px-10">
-    <div class="dropdown">
-      <button tabindex="0" class="m-1 text-xl font-extrabold">CLINIC</button>
+    <div class="dropdown dropdown-hover">
+      <button tabindex="0" class="m-1 text-xl font-extrabold"><p>CLINIC<i class="arrow down ml-3 mb-1"></i></p></button>
       <ul
         tabindex="0"
-        class="dropdown-content menu p-2 bg-base-300 shadow rounded-box w-64 mt-7"
+        class="dropdown-content menu p-2 bg-base-300 shadow rounded-box w-64"
       >
       <li><button @click="$emit('option',0)" class="text-xl">All Clinic</button></li>
         <li v-for="content in category">
@@ -64,11 +57,11 @@ const categoryRouter = () => appRouter.push({ name: "categoryContents",});
     </div>
   </th>
 <th class="px-10">
-    <div class="dropdown">
-      <button tabindex="0" class="m-1 text-xl font-extrabold">DATE</button>
+    <div class="dropdown dropdown-hover">
+      <button tabindex="0" class="m-1 text-xl font-extrabold"><p>DATE<i class="arrow down ml-3 mb-1"></i></p></button>
       <ul
         tabindex="0"
-        class="dropdown-content menu p-2 bg-base-300 shadow rounded-box w-36 mt-7"
+        class="dropdown-content menu p-2 bg-base-300 shadow rounded-box w-36"
       >
       <li><button @click="$emit('upcoming')" class="text-xl">Upcoming</button></li>
       <li><button @click="$emit('past')" class="text-xl">Past</button></li>
@@ -77,4 +70,15 @@ const categoryRouter = () => appRouter.push({ name: "categoryContents",});
   </th>  <th class="text-xl font-extrabold px-10">DURATION</th>
 </template>
 
-<style></style>
+<style scoped>
+.arrow {
+  border: solid rgb(255, 255, 255);
+  border-width: 0 4px 4px 0;
+  display: inline-block;
+  padding: 3px;
+}
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+</style>

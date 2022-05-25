@@ -61,8 +61,8 @@ const isModalOn = ref(false);
                             <div v-show="isModalOn">
                                 <p class="grid justify-center font-bold text-2xl mb-4 font-header">Description</p>
                                 <textarea
-                                    cols="50"
-                                    rows="3"
+                                    cols="60"
+                                    rows="4"
                                     maxlength="500"
                                     v-model="detail.eventCategoryDescription"
                                     class="text-black p-2 m-1 rounded-md"
@@ -97,8 +97,7 @@ const isModalOn = ref(false);
                                 v-show="isModalOn"
                                 type="button"
                                 value="Cancel"
-                                @click="
-                                isModalOn = !isModalOn;"
+                                @click="isModalOn = !isModalOn;"
                             />
                         </div>
                     </form>

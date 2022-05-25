@@ -4,68 +4,57 @@ import CEdit from "./buttons/categoryBtn/CEdit.vue";
 import CDelete from "./buttons/categoryBtn/CDelete.vue";
 import CNavbar from "./buttons/categoryBtn/CNavbar.vue";
 
-const categorys = ref([]);
-const URL = "http://intproj21.sit.kmutt.ac.th/at1/api/categories";
+const categories = ref([]);
 
 // GET
-const getCategorys = async () => {
-    const res = await fetch(URL);
+const getCategories = async () => {
+    const res = await fetch(import.meta.env.VITE_CATEGORY_URL);
     if (res.status === 200) {
-        categorys.value = await res.json();
+        categories.value = await res.json();
     } else console.log("error, cannot get data");
 };
 
 onBeforeMount(async () => {
-    await getCategorys();
+    await getCategories();
 });
 //DELETE
-const removeCategorys = async (removeContentID) => {
+const removeCategories = async (removeContentID) => {
     if (confirm("Do you really want to delete")) {
-        const res = await fetch(URL + "/" + removeContentID, {
+        const res = await fetch(import.meta.env.VITE_CATEGORY_URL + "/" + removeContentID, {
             method: "DELETE",
         });
         if (res.status === 200) {
-            categorys.value = categorys.value.filter(
-                (categorys) => categorys.id !== removeContentID
+            categories.value = categories.value.filter(
+                (categories) => categories.id !== removeContentID
             );
-            console.log("deleted successfullly");
+            console.log("deleted successfully");
         } else console.log("error, cannot delete");
     }
 };
 
-// EDIT
-const modifyCategorys = async (newid, newName, newDesc) => {
-    const res = await fetch(URL + "/" + newid, {
+// PUT
+const modifyCategories = async (newId, newName, newDesc, newDuration) => {
+    const res = await fetch(import.meta.env.VITE_CATEGORY_URL + "/" + newId, {
         method: "PUT",
         headers: {
             "content-type": "application/json",
         },
         body: JSON.stringify({
             eventCategoryName: newName,
-            eventCategoryDescription: newDesc,
+            eventCategoryDescription: newDesc == null ? null : newDesc.trim(),
+            eventDuration: newDuration,
         }),
     });
-    if (res.status === 201) {
-        getCategorys();
-        const modify = await res.json();
-        categorys.value = categorys.value.map((categorys) =>
-            categorys.id === modify.id
-                ? {
-                      ...categorys,
-                      eventCategoryName: newName,
-                      eventCategoryDescription: newDesc,
-                  }
-                : categorys
-        );
+    if (res.status === 200) {
+        getSchedules();
         console.log("edited successfully");
     } else console.log("error, cannot edit");
 };
 
 const currentDetail = ref({});
 const moreDetail = (curbookingId) => {
-  currentDetail.value = curbookingId;
+    currentDetail.value = curbookingId;
 };
-
 </script>
 
 <template>
@@ -78,15 +67,27 @@ const moreDetail = (curbookingId) => {
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="contents in categorys" :key="contents.id">
+                <tr v-for="contents in categories" :key="contents.id">
                     <td class="p-10 text-xl">
                         <div class="box-element break-words">
                             {{ contents.eventCategoryName }}
                         </div>
                     </td>
                     <td class="p-10 text-xl">
-                        <div class="pt-2">
+                        <div
+                            v-if="
+                                contents.eventCategoryDescription != null &&
+                                contents.eventCategoryDescription.trim() != ''
+                            "
+                            class="pt-2"
+                        >
                             {{ contents.eventCategoryDescription }}
+                        </div>
+                        <div
+                            v-else-if="typeof contents.eventCategoryDescription"
+                            class="auto-fill text-xl font-medium"
+                        >
+                            No message
                         </div>
                     </td>
                     <td class="p-10 text-xl">
@@ -96,12 +97,12 @@ const moreDetail = (curbookingId) => {
                     <td>
                         <div id="showDetail">
                             <CEdit
-                            @moreDetail="moreDetail(contents)"
+                                @moreDetail="moreDetail(contents)"
                                 :detail="currentDetail"
-                                @editDetail="modifyCategorys"
+                                @editDetail="modifyCategories"
                             />
 
-                            <CDelete @delete="removeCategorys(contents.id)" />
+                            <CDelete @delete="removeCategories(contents.id)" />
                         </div>
                     </td>
                 </tr>
@@ -113,10 +114,6 @@ const moreDetail = (curbookingId) => {
 <style scoped>
 [v-cloak] {
     display: none;
-}
-
-.textarea {
-    @apply textarea-ghost focus:outline-none;
 }
 
 table {
@@ -165,5 +162,8 @@ textarea {
     overflow: auto;
     background-color: rgb(0, 0, 0);
     background-color: rgba(0, 0, 0, 0.4);
+}
+.auto-fill {
+    color: #8f8f8f;
 }
 </style>
