@@ -1,12 +1,19 @@
 <script setup>
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, computed } from "vue";
 import moment from "moment";
 import Detail from "./buttons/scheduleBtn/Detail.vue";
 import Create from "./buttons/scheduleBtn/Create.vue";
 import Delete from "./buttons/scheduleBtn/Delete.vue";
 import Navbar from "./buttons/scheduleBtn/Navbar.vue";
 
+const props = defineProps({
+  date: {
+    type: Array,
+    default: undefined,
+  },
+});
 const schedules = ref([]);
+const sortdate = ref(props.date);
 
 // GET
 const getSchedules = async () => {
@@ -22,9 +29,12 @@ onBeforeMount(async () => {
 //DELETE
 const removeSchedules = async (removeContentID) => {
   if (confirm("Do you really want to delete")) {
-    const res = await fetch(import.meta.env.VITE_EVENT_URL + "/" + removeContentID, {
-      method: "DELETE",
-    });
+    const res = await fetch(
+      import.meta.env.VITE_EVENT_URL + "/" + removeContentID,
+      {
+        method: "DELETE",
+      }
+    );
     if (res.status === 200) {
       schedules.value = schedules.value.filter(
         (schedules) => schedules.id !== removeContentID
@@ -37,25 +47,25 @@ const removeSchedules = async (removeContentID) => {
 // PUT
 const modifySchedules = async (newId, newTime, newNotes, isOverlap) => {
   console.log(isOverlap);
-  if(isOverlap){
-  }else{
-  const res = await fetch(import.meta.env.VITE_EVENT_URL + "/" + newId, {
-    method: "PUT",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      eventStartTime: moment(newTime).utcOffset('+07:00'),
-      eventNotes: newNotes == null ? null : newNotes.trim(),
-    }),
-  });
-  if (res.status === 200) {
-    const edit = await res.json();
-    data.value = edit.eventNotes;
-    getSchedules();
-    console.log("edited successfully");
-  } else console.log("error, cannot edit");
-}
+  if (isOverlap) {
+  } else {
+    const res = await fetch(import.meta.env.VITE_EVENT_URL + "/" + newId, {
+      method: "PUT",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        eventStartTime: moment(newTime).utcOffset("+07:00"),
+        eventNotes: newNotes == null ? null : newNotes.trim(),
+      }),
+    });
+    if (res.status === 200) {
+      const edit = await res.json();
+      data.value = edit.eventNotes;
+      getSchedules();
+      console.log("edited successfully");
+    } else console.log("error, cannot edit");
+  }
 };
 
 // POST
@@ -80,7 +90,7 @@ const createNewSchedules = async (
         bookingName: Name,
         bookingEmail: Email,
         categoryId: selectedId,
-        eventStartTime: moment(Time).utcOffset('+07:00'),
+        eventStartTime: moment(Time).utcOffset("+07:00"),
         eventDuration: Duration,
         eventNotes: Notes.trim() == "" ? null : Notes.trim(),
       }),
@@ -107,7 +117,9 @@ const clinic = ref();
 const getClinic = async (id) => {
   if (id !== 0) {
     menu.value = undefined;
-    const res = await fetch(import.meta.env.VITE_CATEGORY_URL + "/" + id + "/events");
+    const res = await fetch(
+      import.meta.env.VITE_CATEGORY_URL + "/" + id + "/events"
+    );
     if (res.status === 200) {
       clinic.value = await res.json();
       console.log(clinic.value);
@@ -115,6 +127,7 @@ const getClinic = async (id) => {
   } else {
     clinic.value = undefined;
     menu.value = undefined;
+    props.date = undefined;
   }
 };
 
@@ -174,7 +187,9 @@ const getPast = async () => {
 
           <td class="p-10 text-xl">
             {{
-              moment(contents.eventStartTime).local().format("D MMMM YYYY, h:mm:ss A")
+              moment(contents.eventStartTime)
+                .local()
+                .format("D MMMM YYYY, h:mm:ss A")
             }}
           </td>
 
@@ -194,7 +209,10 @@ const getPast = async () => {
             </div>
           </td>
         </tr>
-        <tr v-else-if="menu == undefined" v-for="contents in clinic">
+        <tr
+          v-else-if="menu == undefined"
+          v-for="contents in clinic"
+        >
           <td class="p-10 text-xl">
             <div class="box-element break-words">
               {{ contents.bookingName }}
@@ -208,7 +226,9 @@ const getPast = async () => {
 
           <td class="p-10 text-xl">
             {{
-              moment(contents.eventStartTime).local().format("D MMMM YYYY, h:mm:ss A")
+              moment(contents.eventStartTime)
+                .local()
+                .format("D MMMM YYYY, h:mm:ss A")
             }}
           </td>
 
@@ -227,6 +247,41 @@ const getPast = async () => {
             </div>
           </td>
         </tr>
+        <!-- <tr v-else-if="date !== undefined" v-for="contents in date">
+          <td class="p-10 text-xl">
+            <div class="box-element break-words">
+              {{ contents.bookingName }}
+            </div>
+          </td>
+          <td class="p-10 text-xl">
+            <div class="pt-2">
+              {{ contents.categoryName }}
+            </div>
+          </td>
+
+          <td class="p-10 text-xl">
+            {{
+              moment(contents.eventStartTime)
+                .local()
+                .format("D MMMM YYYY, h:mm:ss A")
+            }}
+          </td>
+
+          <td class="p-10 text-xl">{{ contents.eventDuration }} minute</td>
+
+          <td>
+            <div id="showDetail">
+              <Detail
+                @moreDetail="moreDetail(contents)"
+                :detail="currentDetail"
+                :data="data"
+                @editDetail="modifySchedules"
+              />
+
+              <Delete @delete="removeSchedules(contents.id)" />
+            </div>
+          </td>
+        </tr> -->
         <tr v-else v-for="contents in menu">
           <td class="p-10 text-xl">
             <div class="box-element break-words">
@@ -241,7 +296,9 @@ const getPast = async () => {
 
           <td class="p-10 text-xl">
             {{
-              moment(contents.eventStartTime).local().format("D MMMM YYYY, h:mm:ss A")
+              moment(contents.eventStartTime)
+                .local()
+                .format("D MMMM YYYY, h:mm:ss A")
             }}
           </td>
 
@@ -329,4 +386,3 @@ textarea {
   background-color: rgba(0, 0, 0, 0.4);
 }
 </style>
-
