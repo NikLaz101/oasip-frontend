@@ -178,7 +178,7 @@ realTime();
                 required
               />
               <p class="text-red-600" v-show="error">
-                Error this start time is overlaped other event!!!
+                Error!!! this start time is overlapped other event.
               </p>
             </div>
             <!-- Duration -->
