@@ -67,7 +67,8 @@ const categoryRouter = () => appRouter.push({ name: "categoryContents",});
       <li><button @click="$emit('past')" class="text-xl">Past</button></li>
       </ul>
     </div>
-  </th>  <th class="text-xl font-extrabold px-10">DURATION</th>
+  </th> 
+  <th class="text-xl font-extrabold px-10">DURATION</th>
 </template>
 
 <style scoped>
