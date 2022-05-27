@@ -20,7 +20,7 @@ const Time = ref();
         />
       </svg>
     </span>
-    <form method="post" @input.prevent="$emit('sort-date', Time)">
+    <form method="post" @input.prevent="$emit('sort-date', Time); Time = undefined">
       <input type="date" class="datepicker-input" v-model="Time" />
     </form>
   </span>

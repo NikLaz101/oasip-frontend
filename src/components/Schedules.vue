@@ -1,21 +1,15 @@
 <script setup>
-import { ref, onBeforeMount, computed } from "vue";
+import { ref, onBeforeMount } from "vue";
 import moment from "moment";
 import Detail from "./buttons/scheduleBtn/Detail.vue";
 import Create from "./buttons/scheduleBtn/Create.vue";
 import Delete from "./buttons/scheduleBtn/Delete.vue";
 import Navbar from "./buttons/scheduleBtn/Navbar.vue";
+import SortDate from "./buttons/scheduleBtn/SortDate.vue";
 
-const props = defineProps({
-  date: {
-    type: Array,
-    default: undefined,
-  },
-});
 const schedules = ref([]);
-const sortdate = ref(props.date);
 
-// GET
+// GET  
 const getSchedules = async () => {
   const res = await fetch(import.meta.env.VITE_EVENT_URL);
   if (res.status === 200) {
@@ -113,43 +107,48 @@ const moreDetail = (curbookingId) => {
   getSchedules();
 };
 
-const clinic = ref();
+const filter = ref();
 const getClinic = async (id) => {
   if (id !== 0) {
-    menu.value = undefined;
     const res = await fetch(
       import.meta.env.VITE_CATEGORY_URL + "/" + id + "/events"
     );
     if (res.status === 200) {
-      clinic.value = await res.json();
-      console.log(clinic.value);
+      filter.value = await res.json();
+      console.log(filter.value);
     } else console.log("error, cannot get data");
   } else {
-    clinic.value = undefined;
-    menu.value = undefined;
-    props.date = undefined;
+    filter.value = undefined;
   }
 };
 
-const menu = ref();
 const getUpcoming = async () => {
   const res = await fetch(import.meta.env.VITE_EVENT_URL + "/upcoming");
   if (res.status === 200) {
-    menu.value = await res.json();
-    console.log(menu.value);
+    filter.value = await res.json();
+    console.log(filter.value);
   } else console.log("error, cannot get data");
 };
 
 const getPast = async () => {
   const res = await fetch(import.meta.env.VITE_EVENT_URL + "/past");
   if (res.status === 200) {
-    menu.value = await res.json();
-    console.log(menu.value);
+    filter.value = await res.json();
+    console.log(filter.value);
   } else console.log("error, cannot get data");
 };
+
+//GET
+const getSortDate = async(date) => {
+    const res = await fetch(import.meta.env.VITE_EVENT_URL + '/sort-date/' + date );
+  if (res.status === 200) {
+    filter.value = await res.json();
+  } else console.log("error, cannot get data");
+}
 </script>
 
 <template>
+    <SortDate @sort-date="getSortDate" />
   <div id="contents-list" v-cloak class="px-10 py-5 flex justify-center">
     <table class="table-zebra table-layout table-element">
       <thead class="table-header bg-base-200">
@@ -162,7 +161,7 @@ const getPast = async () => {
       </thead>
       <div
         id="Noevent"
-        v-if="(schedules && clinic < 1) || menu < 1"
+        v-if="(schedules< 1) || filter < 1 "
         class="text-5xl pt-20"
         v-cloak
       >
@@ -170,7 +169,7 @@ const getPast = async () => {
       </div>
       <tbody v-else>
         <tr
-          v-if="clinic == undefined && menu == undefined"
+          v-if="filter == undefined"
           v-for="contents in schedules"
           :key="contents.id"
         >
@@ -210,79 +209,9 @@ const getPast = async () => {
           </td>
         </tr>
         <tr
-          v-else-if="menu == undefined"
-          v-for="contents in clinic"
+          v-else
+          v-for="contents in filter"
         >
-          <td class="p-10 text-xl">
-            <div class="box-element break-words">
-              {{ contents.bookingName }}
-            </div>
-          </td>
-          <td class="p-10 text-xl">
-            <div class="pt-2">
-              {{ contents.categoryName }}
-            </div>
-          </td>
-
-          <td class="p-10 text-xl">
-            {{
-              moment(contents.eventStartTime)
-                .local()
-                .format("D MMMM YYYY, h:mm:ss A")
-            }}
-          </td>
-
-          <td class="p-10 text-xl">{{ contents.eventDuration }} minute</td>
-
-          <td>
-            <div id="showDetail">
-              <Detail
-                @moreDetail="moreDetail(contents)"
-                :detail="currentDetail"
-                :data="data"
-                @editDetail="modifySchedules"
-              />
-
-              <Delete @delete="removeSchedules(contents.id)" />
-            </div>
-          </td>
-        </tr>
-        <!-- <tr v-else-if="date !== undefined" v-for="contents in date">
-          <td class="p-10 text-xl">
-            <div class="box-element break-words">
-              {{ contents.bookingName }}
-            </div>
-          </td>
-          <td class="p-10 text-xl">
-            <div class="pt-2">
-              {{ contents.categoryName }}
-            </div>
-          </td>
-
-          <td class="p-10 text-xl">
-            {{
-              moment(contents.eventStartTime)
-                .local()
-                .format("D MMMM YYYY, h:mm:ss A")
-            }}
-          </td>
-
-          <td class="p-10 text-xl">{{ contents.eventDuration }} minute</td>
-
-          <td>
-            <div id="showDetail">
-              <Detail
-                @moreDetail="moreDetail(contents)"
-                :detail="currentDetail"
-                :data="data"
-                @editDetail="modifySchedules"
-              />
-
-              <Delete @delete="removeSchedules(contents.id)" />
-            </div>
-          </td>
-        </tr> -->
-        <tr v-else v-for="contents in menu">
           <td class="p-10 text-xl">
             <div class="box-element break-words">
               {{ contents.bookingName }}
