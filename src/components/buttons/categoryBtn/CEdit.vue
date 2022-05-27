@@ -2,7 +2,7 @@
 import { ref } from "vue";
 
 defineEmits(["moreDetail", "editDetail"]);
-const props = defineProps({
+defineProps({
     detail: {
         type: Object,
         require: true,
