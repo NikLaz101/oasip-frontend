@@ -1,9 +1,5 @@
 <script setup>
 import Schedules from "../components/Schedules.vue";
-import SortDate from "../components/buttons/scheduleBtn/SortDate.vue";
-import {ref} from 'vue';
-const sortdate = ref();
-
 </script>
 
 <template>

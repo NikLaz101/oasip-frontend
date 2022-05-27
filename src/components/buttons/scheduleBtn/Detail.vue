@@ -180,19 +180,19 @@ const checkOverlap = (start_1, end_1, start_2, end_2) => {
                 <textarea
                   cols="50"
                   rows="3"
-                  v-model="props.data"
+                  v-model="data"
                   class="text-black p-2 rounded-lg"
                 ></textarea>
               </div>
             </div>
             <div class="flex justify-end">
-              <input class="btn m-2" v-show="edit" type="submit" value="OK" @click="detail.eventNotes = props.data; overlap()" />
+              <input class="btn m-2" v-show="edit" type="submit" value="OK" @click="detail.eventNotes = data; overlap()" />
               <input
                 class="btn m-2"
                 v-show="edit"
                 type="button"
                 value="Cancel"
-                @click="edit = !edit
+                @click="edit = !edit; data = detail.eventNotes
                 "
               />
             </div>
