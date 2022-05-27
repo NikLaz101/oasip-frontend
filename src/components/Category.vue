@@ -20,7 +20,7 @@ onBeforeMount(async () => {
 
 // PUT
 const modifyCategories = async (id, newName, newDesc, newDuration) => {
-    const res = await fetch(import.meta.env.VITE_CATEGORY_URL + "/" + id + "/events", {
+    const res = await fetch(import.meta.env.VITE_CATEGORY_URL + "/" + id, {
         method: "PUT",
         headers: {
             "content-type": "application/json",
