@@ -127,7 +127,7 @@ const getClinic = async (id) => {
 const getUpcoming = async () => {
     const res = await fetch(import.meta.env.VITE_EVENT_URL + "/upcoming");
     if (res.status === 200) {
-        upcomingEvent .value = await res.json();
+        upcomingEvent.value = await res.json();
         console.log(upcomingEvent.value);
     } else console.log("error, cannot get data");
 };

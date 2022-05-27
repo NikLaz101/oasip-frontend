@@ -2,7 +2,7 @@
 import { ref } from "vue";
 
 defineEmits(["moreDetail", "editDetail"]);
-defineProps({
+const props = defineProps({
     detail: {
         type: Object,
         require: true,
@@ -10,6 +10,7 @@ defineProps({
 });
 
 const isModalOn = ref(false);
+// const duplicateValue = () => new Set(props.detail.map((v) => v.eventCategoryName))
 </script>
 
 <template>
@@ -46,7 +47,11 @@ const isModalOn = ref(false);
                             v-show="isModalOn"
                             class="text-base font-medium grid justify-center py-2"
                         >
-                            <p class="grid justify-center font-bold text-4xl mb-4 font-header">Category Name</p>
+                            <p
+                                class="grid justify-center font-bold text-4xl mb-4 font-header"
+                            >
+                                Category Name
+                            </p>
                             <input
                                 type="text"
                                 v-model="detail.eventCategoryName"
@@ -59,7 +64,11 @@ const isModalOn = ref(false);
                             class="text-base font-medium grid justify-center py-2"
                         >
                             <div v-show="isModalOn">
-                                <p class="grid justify-center font-bold text-2xl mb-4 font-header">Description</p>
+                                <p
+                                    class="grid justify-center font-bold text-2xl mb-4 font-header"
+                                >
+                                    Description
+                                </p>
                                 <textarea
                                     cols="60"
                                     rows="4"
@@ -97,7 +106,7 @@ const isModalOn = ref(false);
                                 v-show="isModalOn"
                                 type="button"
                                 value="Cancel"
-                                @click="isModalOn = !isModalOn;"
+                                @click="isModalOn = !isModalOn"
                             />
                         </div>
                     </form>

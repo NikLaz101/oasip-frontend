@@ -17,24 +17,10 @@ const getCategories = async () => {
 onBeforeMount(async () => {
     await getCategories();
 });
-//DELETE
-const removeCategories = async (removeContentID) => {
-    if (confirm("Do you really want to delete")) {
-        const res = await fetch(import.meta.env.VITE_CATEGORY_URL + "/" + removeContentID, {
-            method: "DELETE",
-        });
-        if (res.status === 200) {
-            categories.value = categories.value.filter(
-                (categories) => categories.id !== removeContentID
-            );
-            console.log("deleted successfully");
-        } else console.log("error, cannot delete");
-    }
-};
 
 // PUT
-const modifyCategories = async (newId, newName, newDesc, newDuration) => {
-    const res = await fetch(import.meta.env.VITE_CATEGORY_URL + "/" + newId, {
+const modifyCategories = async (id, newName, newDesc, newDuration) => {
+    const res = await fetch(import.meta.env.VITE_CATEGORY_URL + "/" + id + "/events", {
         method: "PUT",
         headers: {
             "content-type": "application/json",
@@ -101,8 +87,6 @@ const moreDetail = (curbookingId) => {
                                 :detail="currentDetail"
                                 @editDetail="modifyCategories"
                             />
-
-                            <CDelete @delete="removeCategories(contents.id)" />
                         </div>
                     </td>
                 </tr>
@@ -142,26 +126,6 @@ textarea {
 }
 .table-element {
     height: 100px;
-}
-.modal-content {
-    background-color: #ffffff;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    height: 300px;
-}
-.modal {
-    position: fixed;
-    z-index: 1;
-    padding-top: 300px;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 600px;
-    overflow: auto;
-    background-color: rgb(0, 0, 0);
-    background-color: rgba(0, 0, 0, 0.4);
 }
 .auto-fill {
     color: #8f8f8f;
