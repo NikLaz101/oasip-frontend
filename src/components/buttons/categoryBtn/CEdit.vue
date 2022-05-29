@@ -28,9 +28,6 @@ const props = defineProps({
 const isModalOn = ref(false);
 const isunique = ref(false);
 const error = ref(false);
-// const name = ref('');
-// const description = ref('');
-// const duration = ref();
 
 const unique = (name, id) => {
   props.category.forEach((e) => {
@@ -51,15 +48,9 @@ const unique = (name, id) => {
       $emit('moreDetail');
       isModalOn = !isModalOn;
       error = false;
-<<<<<<< HEAD
       name = detail.eventCategoryName;
       description = detail.eventCategoryDescription;
       duration = detail.eventDuration;
-=======
-      props.name = detail.eventCategoryName;
-      props.description = detail.eventCategoryDescription;
-      props.duration = detail.eventDuration;
->>>>>>> d92741e6ff6a070c0d9a9cc6433cab832c1b98c8
     "
   >
     EDIT
@@ -77,9 +68,9 @@ const unique = (name, id) => {
               $emit(
                 'editDetail',
                 detail.id,
-                props.name.trim(),
-                props.description,
-                props.duration,
+                name,
+                description,
+                duration,
                 isunique
               );
               isunique == true ? isModalOn : (isModalOn = !isModalOn);
@@ -97,7 +88,7 @@ const unique = (name, id) => {
               </p>
               <input
                 type="text"
-                v-model="props.name"
+                v-model="name"
                 class="text-black p-1 m-1 rounded-md"
                 maxlength="100"
                 required
@@ -117,7 +108,7 @@ const unique = (name, id) => {
                   cols="60"
                   rows="4"
                   maxlength="500"
-                  v-model="props.description"
+                  v-model="description"
                   class="text-black p-2 m-1 rounded-md"
                 ></textarea>
               </div>
@@ -129,7 +120,7 @@ const unique = (name, id) => {
                   type="number"
                   min="1"
                   max="480"
-                  v-model="props.duration"
+                  v-model="duration"
                   class="text-black p-1 m-1 rounded-md"
                   required
                 />
@@ -142,7 +133,7 @@ const unique = (name, id) => {
                 v-show="isModalOn"
                 type="submit"
                 value="OK"
-                @click="unique(props.name.trim(), detail.id)"
+                @click="unique(name, detail.id)"
               />
               <input
                 class="btn m-2"
