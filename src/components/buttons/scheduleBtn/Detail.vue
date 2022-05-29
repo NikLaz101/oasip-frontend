@@ -51,9 +51,7 @@ const overlap = () => {
 };
 
 const checkOverlap = (start_1, end_1, start_2, end_2) => {
-  if (start_1 <= start_2 && start_2 <= end_1) return true;
-  if (start_1 <= end_2 && end_2 <= end_1) return true;
-  if (start_2 < start_1 && end_1 < end_2) return true;
+    if (start_1 < end_2 && end_1 > start_2) return true;
   return false;
 };
 </script>
@@ -180,13 +178,13 @@ const checkOverlap = (start_1, end_1, start_2, end_2) => {
                 <textarea
                   cols="50"
                   rows="3"
-                  v-model="data"
+                  v-model="props.data"
                   class="text-black p-2 rounded-lg"
                 ></textarea>
               </div>
             </div>
             <div class="flex justify-end">
-              <input class="btn m-2" v-show="edit" type="submit" value="OK" @click="detail.eventNotes = data; overlap()" />
+              <input class="btn m-2" v-show="edit" type="submit" value="OK" @click="detail.eventNotes = props.data; overlap()" />
               <input
                 class="btn m-2"
                 v-show="edit"

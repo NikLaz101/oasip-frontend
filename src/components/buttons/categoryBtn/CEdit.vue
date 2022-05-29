@@ -48,9 +48,9 @@ const unique = (name, id) => {
       $emit('moreDetail');
       isModalOn = !isModalOn;
       error = false;
-      name = detail.eventCategoryName;
-      description = detail.eventCategoryDescription
-      duration = detail.eventDuration;
+      props.name = detail.eventCategoryName;
+      props.description = detail.eventCategoryDescription;
+      props.duration = detail.eventDuration;
     "
   >
     EDIT
@@ -68,9 +68,9 @@ const unique = (name, id) => {
               $emit(
                 'editDetail',
                 detail.id,
-                name,
-                description,
-                duration,
+                props.name.trim(),
+                props.description,
+                props.duration,
                 isunique
               );
               isunique == true ? isModalOn : (isModalOn = !isModalOn);
@@ -88,7 +88,7 @@ const unique = (name, id) => {
               </p>
               <input
                 type="text"
-                v-model="name"
+                v-model="props.name"
                 class="text-black p-1 m-1 rounded-md"
                 maxlength="100"
                 required
@@ -108,7 +108,7 @@ const unique = (name, id) => {
                   cols="60"
                   rows="4"
                   maxlength="500"
-                  v-model="description"
+                  v-model="props.description"
                   class="text-black p-2 m-1 rounded-md"
                 ></textarea>
               </div>
@@ -120,7 +120,7 @@ const unique = (name, id) => {
                   type="number"
                   min="1"
                   max="480"
-                  v-model="duration"
+                  v-model="props.duration"
                   class="text-black p-1 m-1 rounded-md"
                   required
                 />
@@ -133,7 +133,7 @@ const unique = (name, id) => {
                 v-show="isModalOn"
                 type="submit"
                 value="OK"
-                @click="unique(name, detail.id)"
+                @click="unique(props.name.trim(), detail.id)"
               />
               <input
                 class="btn m-2"
