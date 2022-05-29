@@ -28,6 +28,9 @@ const props = defineProps({
 const isModalOn = ref(false);
 const isunique = ref(false);
 const error = ref(false);
+// const name = ref('');
+// const description = ref('');
+// const duration = ref();
 
 const unique = (name, id) => {
   props.category.forEach((e) => {
@@ -49,7 +52,7 @@ const unique = (name, id) => {
       isModalOn = !isModalOn;
       error = false;
       name = detail.eventCategoryName;
-      description = detail.eventCategoryDescription
+      description = detail.eventCategoryDescription;
       duration = detail.eventDuration;
     "
   >
