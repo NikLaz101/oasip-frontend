@@ -52,9 +52,7 @@ const overlap = () => {
 };
 
 const checkOverlap = (start_1, end_1, start_2, end_2) => {
-  if (start_1 <= start_2 && start_2 <= end_1) return true;
-  if (start_1 <= end_2 && end_2 <= end_1) return true;
-  if (start_2 < start_1 && end_1 < end_2) return true;
+    if (start_1 < end_2 && end_1 > start_2) return true;
   return false;
 };
 
